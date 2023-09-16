@@ -40,10 +40,10 @@ Deze plugins zijn nodig om Teams, Commissies en Fotopagina's werkend te krijgen.
 Gefeliciteerd, WordPress is klaar en geïnstalleerd! Je kunt nu de andere applicaties aansluiten. 
 
 ## Team-Portal
-Zie de Team-Portal repository voor install instructies
+Zie de [Team-Portal](https://github.com/skcvolleybal/team-portal/) repository voor install instructies
 
 ## TC-App
-Zie de Team-Portal repository voor install instructies
+Zie de [TC-app](https://github.com/skcvolleybal/tc-app/) repository voor install instructies
 
 ## Beach-Portal
 Vraag Sjon (to-do)
