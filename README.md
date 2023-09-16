@@ -15,7 +15,7 @@ WordPress is de basis waar alle andere applicaties op aansluiten, dus dit moet d
 - Extract WordPress en plaats de inhoud in de root van je webserver bijv. C:\xampp\htdocs of C:\laragon\www
 - Voor je begint met installeren, maak een nieuwe database in PHPMyAdmin (localhost/phpmyadmin)
 - Installeer WordPress, ga in je browser naar http://localhost en loop de stappen door
-- Geef je site een leuke titel en username, gefeliciteerd, je hebt nu je lokale development WordPress bijna klaar
+- Geef je site een leuke titel en username 
 
 ### Essentiële plugins:
 
