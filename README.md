@@ -3,8 +3,8 @@ Deze repo bevat alle instructies om je lokale DEV in te richten.
 
 ## Webserver software
 Om te kunnen devven moet je altijd een webserver hebben, anders wordt het lastig. Docker mag ook als je dat leuk vindt. 
-- Kies Laragon of XAMPP op Windows
-- Kies XAMPP of MAMP op Mac
+- Kies [Laragon](https://laragon.org/index.html) of XAMPP op Windows
+- Kies [XAMPP](https://sourceforge.net/projects/xampp/files/XAMPP%20Mac%20OS%20X/) of MAMP op Mac
 
 ## WordPress 
 WordPress is de basis waar alle andere applicaties op aansluiten. Deze moet dus altijd eerst geïnstalleerd zijn. 
