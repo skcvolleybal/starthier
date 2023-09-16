@@ -7,7 +7,7 @@ Om te kunnen devven moet je altijd een webserver hebben, anders wordt het lastig
 - Kies [XAMPP](https://sourceforge.net/projects/xampp/files/XAMPP%20Mac%20OS%20X/) op Mac
 
 ## WordPress 
-WordPress is de basis waar alle andere applicaties op aansluiten. Deze moet dus altijd eerst geïnstalleerd zijn. 
+WordPress is de basis waar alle andere applicaties op aansluiten, dus dit moet dus altijd eerst geïnstalleerd zijn. 
 
 ### Installatie: 
 
