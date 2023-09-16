@@ -29,7 +29,7 @@ Deze plugins zijn nodig om Teams, Commissies en Fotopagina's werkend te krijgen.
 - De Commissies, Fotopagina's en Teams zijn nu zichtbaar links in je menu sidebar
 
 ### Data toevoegen: 
-- Creëer de roles Barcie, Bestuur, CommissieCo, ScheidsCo, TC en Teamcoordinator, zodat de lokale TC-app en Team-Portal kunnen werken.
+- Creëer de roles Barcie, Bestuur, CommissieCo, ScheidsCo, TC en Teamcoordinator, zodat de lokale TC-app en Team-Portal kunnen werken. Dit kan bij Pods Admin > Roles & Capabilities.
 	- De rol Barcie is nodig om de barleden te laten verschijnen in TeamPortal
 	- Teamcoordinator is nodig om de teamtaken en barleden te plannen
 	- TC is nodig om in de TC-app in te kunnen loggen	
@@ -37,7 +37,7 @@ Deze plugins zijn nodig om Teams, Commissies en Fotopagina's werkend te krijgen.
 	- CommissieCo en ScheidsCo zijn waarschijnlijk oud en obsolete 
 - Creëer wat dummy teams en commissies en voeg hier gebruikers aan toe
 
-Gefeliciteerd, WordPress is klaar en geïnstalleerd! 
+Gefeliciteerd, WordPress is klaar en geïnstalleerd! Je kunt nu de andere applicaties aansluiten. 
 
 ## Team-Portal
 Zie de Team-Portal repository voor install instructies
