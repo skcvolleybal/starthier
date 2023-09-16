@@ -18,7 +18,7 @@ WordPress is de basis waar alle andere applicaties op aansluiten, dus dit moet d
 - Geef je site een leuke titel en username, bijvoorbeeld 'skc_dev' en 'admin' 
 
 ### Essentiële plugins:
-
+Deze plugins zijn nodig om Teams, Commissies en Fotopagina's werkend te krijgen. Ook zijn ze nodig om de juiste rollen toe te voegen binnen de site. 
 - In je lokale development WordPress, installeer en activeer de volgende plugin: 
 	- Pods - Aangepaste Content Typen en Velden
 - Ga naar de productie WordPress versie > Pods Admin > Import/Export Packages
