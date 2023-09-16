@@ -2,7 +2,7 @@
 Deze repo bevat alle instructies om je lokale DEV in te richten. 
 
 ## Webserver software
-Om te kunnen devven moet je altijd een webserver hebben, anders wordt het lastig. Docker mag ook als je dat leuk vindt. 
+Om te kunnen devven moet je altijd een webserver hebben, anders kun je niks runnen. Docker mag ook als je dat leuk vindt. 
 - Kies [Laragon](https://laragon.org/index.html) op Windows
 - Kies [XAMPP](https://sourceforge.net/projects/xampp/files/XAMPP%20Mac%20OS%20X/) op Mac
 
