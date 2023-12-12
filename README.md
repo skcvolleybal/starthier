@@ -44,6 +44,3 @@ Zie de [Team-Portal](https://github.com/skcvolleybal/team-portal/) repository vo
 
 ## TC-App
 Zie de [TC-app](https://github.com/skcvolleybal/tc-app/) repository voor install instructies
-
-## Beach-Portal
-Vraag Sjon (to-do)
