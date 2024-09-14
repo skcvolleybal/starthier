@@ -1,6 +1,13 @@
 # starthier
 Deze repo bevat alle instructies om je lokale DEV in te richten. 
 
+# Heb je een Mac? 
+Run dan "bash mac_install.sh"
+
+# Geen Mac?
+Zie al het onderstaande
+
+
 ## Webserver software
 Om te kunnen devven moet je altijd een webserver hebben, anders kun je niks runnen. Docker mag ook als je dat leuk vindt. 
 - Kies [Laragon](https://laragon.org/index.html) op Windows
