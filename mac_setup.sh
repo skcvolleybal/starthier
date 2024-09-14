@@ -3,8 +3,8 @@ define_variables() {
     DB_NAME="wordpress_db"
     DB_USER="root"
     DB_PASSWORD=""
-    DB_HOST="localhost"
-    WP_URL="http://localhost/$(basename $1)"  # The local URL for your WordPress site
+    DB_HOST="127.0.0.1"
+    WP_URL="http://localhost/"  # The local URL for your WordPress site
     WP_TITLE="SKC WORDPRESS DEV SITE"
     WP_ADMIN_USER="admin"
     WP_ADMIN_PASS="password"
@@ -98,6 +98,7 @@ create_wordpress_database () {
 setup_wp_config_file () {
     # Step 2: Set up wp-config.php for WordPress
     cd "$WP_DIR" || exit
+    echo "Set path to $WP_DIR"
 
     # Check if wp-config.php exists; if not, create it from wp-config-sample.php
     if [ ! -f wp-config.php ]; then
@@ -115,6 +116,9 @@ setup_wp_config_file () {
     sed -i "" "s/username_here/$DB_USER/" wp-config.php
     sed -i "" "s/password_here/$DB_PASS/" wp-config.php
     sed -i "" "s/localhost/$DB_HOST/" wp-config.php
+
+    echo "Resulting wp-config.php:"
+    cat wp-config.php
 }
 
 
@@ -124,7 +128,7 @@ install_wordpress() {
     echo "Installing WordPress..."
 
     # Install WordPress via wp-cli
-    wp core install --path="$WP_DIR" \
+    wp core install --path="$TARGET_DIR" \
     --url="$WP_URL" \
     --title="$WP_TITLE" \
     --admin_user="$WP_ADMIN_USER" \
@@ -141,6 +145,8 @@ install_wordpress() {
     echo "WordPress is now fully set up at $WP_URL."
 
 }
+
+
 define_variables
 # setup_xampp_and_brew
 # download_wordpress_and_plugins
