@@ -48,41 +48,6 @@ is_xampp_present() {
     fi
 }
 
-is_xampp_running() {
-    #!/bin/bash
-
-    # Install netcat if it's not already installed
-    if ! command -v nc &> /dev/null; then
-    echo "Netcat not found, installing..."
-    brew install netcat
-    fi
-
-    # Function to check if a port is open
-    check_port() {
-    local port=$1
-    nc -z localhost $port
-    }
-
-    # Check if MySQL is running on port 3306
-    if check_port 3306; then
-    echo "MySQL is running on port 3306"
-    else
-    echo "MySQL is not running on port 3306"
-    exit 1
-    fi
-
-    # Check if Apache is running on port 80
-    if check_port 80; then
-    echo "Apache is running on port 80"
-    else
-    echo "Apache is not running on port 80"
-    exit 1
-    fi
-
-    # Both services are running
-    echo "Both MySQL and Apache are running"
-
-}
 
 install_xampp() {
     # Check if XAMPP is already present
@@ -116,10 +81,23 @@ install_xampp() {
 
         # Wait for the installation to complete
         echo "Waiting for installation to complete..."
-        echo "Once you have installed XAMPP and started Apache and MySQL, press Enter to continue..."
+        echo "Once you have installed XAMPP, press Enter to continue. We'll start up Apache and MySQL for you."
 
         # Wait for user input
         read
+
+        # Stopping all MySQLD Servers
+        sudo killall mysqld
+        # sudo /Applications/XAMPP/xamppfiles/bin/mysql.server start
+        cd "${TARGET_DIR}/../bin/"
+        sudo ./mysql.server start
+
+        # Stopping all apache servers
+        sudo killall httpd
+        # Starting Apache XAMPP
+        sudo /Applications/XAMPP/xamppfiles/bin/apachectl start
+
+
 
         echo "Installation completed."
 
