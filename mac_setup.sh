@@ -21,7 +21,17 @@ define_variables() {
 
 }
 
+install_brew() {
+    # Install Homebrew
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    echo "Installed Brew"
+
+}
+
 is_xampp_present() {
+
+
     # Check if the directory exists
     if [ -d "$XAMPP_INSTALL_DIRECTORY" ]; then
         # Check if the directory contains any files
@@ -38,6 +48,41 @@ is_xampp_present() {
     fi
 }
 
+is_xampp_running() {
+    #!/bin/bash
+
+    # Install netcat if it's not already installed
+    if ! command -v nc &> /dev/null; then
+    echo "Netcat not found, installing..."
+    brew install netcat
+    fi
+
+    # Function to check if a port is open
+    check_port() {
+    local port=$1
+    nc -z localhost $port
+    }
+
+    # Check if MySQL is running on port 3306
+    if check_port 3306; then
+    echo "MySQL is running on port 3306"
+    else
+    echo "MySQL is not running on port 3306"
+    exit 1
+    fi
+
+    # Check if Apache is running on port 80
+    if check_port 80; then
+    echo "Apache is running on port 80"
+    else
+    echo "Apache is not running on port 80"
+    exit 1
+    fi
+
+    # Both services are running
+    echo "Both MySQL and Apache are running"
+
+}
 
 install_xampp() {
     # Check if XAMPP is already present
@@ -86,20 +131,7 @@ install_xampp() {
 
 
 
-setup_brew() {
-    # Install Homebrew
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-    echo "Installed Brew"
-
-    # # Disable gatekeeper so we can install XAMPP using brew 
-    # sudo spctl --master-disable
-
-    # echo "Disabled Gatekeeper"
-
-    # # Install XAMPP
-    # brew install --cask xampp
-
+setup_node_composer_wpcli() {
     # Install Node 18
     brew install node@18
 
@@ -243,8 +275,9 @@ start_teamportal () {
 }
 
 define_variables
+install_brew
 install_xampp
-setup_brew
+setup_node_composer_wpcli
 download_wordpress_and_plugins
 create_wordpress_database
 setup_wp_config_file
