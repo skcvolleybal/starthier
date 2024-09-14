@@ -17,54 +17,72 @@ define_variables() {
     DMG_NAME="xampp-osx-8.2.4-0-installer.dmg"
     INSTALLER_NAME="xampp-osx-8.2.4-0-installer.app"
     MOUNT_POINT="/Volumes/XAMPP"
+    XAMPP_INSTALL_DIRECTORY="/Applications/XAMPP/xamppfiles"
 
 }
 
-install_xampp () {
-    # Download the .dmg file
-    echo "Downloading $DMG_NAME..."
-    curl -L -o "$DMG_NAME" "$DMG_URL"
-
-    # Mount the .dmg file
-    echo "Mounting $DMG_NAME..."
-    hdiutil attach "$DMG_NAME" -mountpoint "$MOUNT_POINT" -nobrowse
-
-    # Check if the mount was successful
-    if [ $? -ne 0 ]; then
-    echo "Failed to mount $DMG_NAME."
-    exit 1
+is_xampp_present() {
+    # Check if the directory exists
+    if [ -d "$XAMPP_INSTALL_DIRECTORY" ]; then
+        # Check if the directory contains any files
+        if [ "$(ls -A "$XAMPP_INSTALL_DIRECTORY")" ]; then
+            echo "XAMPP already detected at ${XAMPP_INSTALL_DIRECTORY}."
+            return 0  # Directory exists and contains files (XAMPP is present)
+        else
+            echo "The directory is empty."
+            return 1  # Directory exists but is empty (XAMPP is not fully installed)
+        fi
+    else
+        echo "The directory does not exist."
+        return 1  # Directory does not exist (XAMPP is not installed)
     fi
-
-
-    if [ -z "$INSTALLER_NAME" ]; then
-    echo "No installer found in the mounted volume."
-    hdiutil detach "$MOUNT_POINT"
-    exit 1
-    fi
-
-    # Start the installer
-    echo "Starting installer: ${MOUNT_POINT}/${INSTALLER_NAME}..."
-    open "${MOUNT_POINT}/${INSTALLER_NAME}"
-
-    # Wait for the installation to complete
-    echo "Waiting for installation to complete..."
-        # Display a message
-    echo "Once you have installed XAMPP and started Apache and MySQL, press Enter to continue..."
-
-    # Wait for user input
-    read
-
-    # Unmount the .dmg
-    # echo "Unmounting $DMG_NAME..."
-    # hdiutil detach "$MOUNT_POINT"
-
-    # Clean up
-    rm "$DMG_NAME"
-
-    echo "Installation completed."
-
 }
 
+
+install_xampp() {
+    # Check if XAMPP is already present
+    if is_xampp_present "$file_to_check"; then
+        echo "XAMPP is already installed."
+    else
+        # Download XAMPP
+        echo "Downloading $DMG_NAME..."
+        curl -L -o "$DMG_NAME" "$DMG_URL"
+
+        # Mount the .dmg file
+        echo "Mounting $DMG_NAME..."
+        hdiutil attach "$DMG_NAME" -mountpoint "$MOUNT_POINT" -nobrowse
+
+        # Check if the mount was successful
+        if [ $? -ne 0 ]; then
+            echo "Failed to mount $DMG_NAME."
+            exit 1
+        fi
+
+        # Check if the installer name is set
+        if [ -z "$INSTALLER_NAME" ]; then
+            echo "No installer found in the mounted volume."
+            hdiutil detach "$MOUNT_POINT"
+            exit 1
+        fi
+
+        # Start the installer
+        echo "Starting installer: ${MOUNT_POINT}/${INSTALLER_NAME}..."
+        open "${MOUNT_POINT}/${INSTALLER_NAME}"
+
+        # Wait for the installation to complete
+        echo "Waiting for installation to complete..."
+        echo "Once you have installed XAMPP and started Apache and MySQL, press Enter to continue..."
+
+        # Wait for user input
+        read
+
+        echo "Installation completed."
+
+        # Unmount the .dmg file
+        echo "Unmounting $DMG_NAME..."
+        hdiutil detach "$MOUNT_POINT"
+    fi
+}
 
 
 
@@ -226,12 +244,12 @@ start_teamportal () {
 
 define_variables
 install_xampp
-# setup_brew
-# download_wordpress_and_plugins
-# create_wordpress_database
-# setup_wp_config_file
-# install_wordpress
-# install_teamportal
-# start_teamportal
+setup_brew
+download_wordpress_and_plugins
+create_wordpress_database
+setup_wp_config_file
+install_wordpress
+install_teamportal
+start_teamportal
 
 
