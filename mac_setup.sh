@@ -1,6 +1,6 @@
 define_variables() {
     TARGET_DIR="/Applications/XAMPP/xamppfiles/htdocs"
-    DB_NAME="wordpress_db"
+    WORDPRESS_DB_NAME="wordpress_db"
     DB_USER="root"
     DB_PASSWORD=""
     DB_HOST="127.0.0.1"
@@ -11,6 +11,8 @@ define_variables() {
     WP_ADMIN_EMAIL="webcie@skcvolleybal.nl"
 
     WP_DIR=$TARGET_DIR
+
+    TEAMPORTAL_DB_NAME="teamportal_db"
 
     DMG_URL="https://sourceforge.net/projects/xampp/files/XAMPP%20Mac%20OS%20X/8.2.4/xampp-osx-8.2.4-0-installer.dmg"
     # DMG_URL="http://localhost/xampp-osx-8.2.4-0-installer.dmg" # For testing purposes
@@ -86,25 +88,37 @@ install_xampp() {
         # Wait for user input
         read
 
-        # Stopping all MySQLD Servers
-        sudo killall mysqld
-        # sudo /Applications/XAMPP/xamppfiles/bin/mysql.server start
-        cd "${TARGET_DIR}/../bin/"
-        sudo ./mysql.server start
-
-        # Stopping all apache servers
-        sudo killall httpd
-        # Starting Apache XAMPP
-        sudo /Applications/XAMPP/xamppfiles/bin/apachectl start
-
-
-
-        echo "Installation completed."
-
         # Unmount the .dmg file
         echo "Unmounting $DMG_NAME..."
         hdiutil detach "$MOUNT_POINT"
+        
+        echo "Installation completed."
     fi
+
+    echo "Adding XAMPP PHP to path"
+    # Define the path to the XAMPP PHP binary
+    XAMPP_PHP_PATH="/Applications/XAMPP/xamppfiles/bin"
+
+    # Add XAMPP PHP path to the PATH environment variable
+    if ! echo "$PATH" | grep -q "$XAMPP_PHP_PATH"; then
+        export PATH="$XAMPP_PHP_PATH:$PATH"
+        echo "XAMPP PHP path added to PATH"
+    else
+        echo "XAMPP PHP path already in PATH"
+    fi
+
+    echo "Starting MySQL and Apache..."
+    
+    # Stopping all MySQLD Servers
+    sudo killall mysqld
+    # sudo /Applications/XAMPP/xamppfiles/bin/mysql.server start
+    cd "${TARGET_DIR}/../bin/"
+    sudo ./mysql.server start
+
+    # Stopping all apache servers
+    sudo killall httpd
+    # Starting Apache XAMPP
+    sudo /Applications/XAMPP/xamppfiles/bin/apachectl start
 }
 
 
@@ -173,9 +187,9 @@ create_wordpress_database () {
     cd "${TARGET_DIR}/../bin"
 
     echo "⚠️ THIS IS NOT YOUR PASSWORD; IT'S THE EMPTY DATABASE PASSWORD. JUST PRESS ENTER FOR THIS PASSWORD BELOW"
-    ./mysql -u$DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
+    ./mysql -u$DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $WORDPRESS_DB_NAME;"
     if [ $? -eq 0 ]; then
-        echo "Database '$DB_NAME' created successfully."
+        echo "Database '$WORDPRESS_DB_NAME' created successfully."
     else
         echo "Failed to create database."
         exit 1
@@ -199,7 +213,7 @@ setup_wp_config_file () {
     echo "Configuring WordPress database settings in wp-config.php..."
 
     # Replace placeholders in wp-config.php with actual values
-    sed -i "" "s/database_name_here/$DB_NAME/" wp-config.php
+    sed -i "" "s/database_name_here/$WORDPRESS_DB_NAME/" wp-config.php
     sed -i "" "s/username_here/$DB_USER/" wp-config.php
     sed -i "" "s/password_here/$DB_PASS/" wp-config.php
     sed -i "" "s/localhost/$DB_HOST/" wp-config.php
@@ -233,6 +247,24 @@ install_wordpress() {
     echo "This is a CLEAN installation without themes or anything. Use admin panel. " 
 }
 
+create_teamportal_database () {
+
+    echo "Creating TeamPortal database..."
+
+
+    cd "${TARGET_DIR}/../bin"
+
+    echo "⚠️ THIS IS NOT YOUR PASSWORD; IT'S THE EMPTY DATABASE PASSWORD. JUST PRESS ENTER FOR THIS PASSWORD BELOW"
+    ./mysql -u$DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $TEAMPORTAL_DB_NAME;"
+    if [ $? -eq 0 ]; then
+        echo "Database '$TEAMPORTAL_DB_NAME' created successfully."
+    else
+        echo "Failed to create database."
+        exit 1
+    fi
+}
+
+
 install_teamportal () {
     cd $TARGET_DIR
     git clone https://github.com/skcvolleybal/team-portal
@@ -260,6 +292,7 @@ download_wordpress_and_plugins
 create_wordpress_database
 setup_wp_config_file
 install_wordpress
+create_teamportal_database
 install_teamportal
 start_teamportal
 
