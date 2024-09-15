@@ -52,9 +52,16 @@ install_xampp() {
     if is_xampp_present "$file_to_check"; then
         echo "XAMPP is already installed."
     else
-        # Download XAMPP
-        echo "Downloading $DMG_NAME..."
-        curl -L -o "$DMG_NAME" "$DMG_URL"
+        # Try mounting XAMPP from an previous local storage download
+        echo "Trying to mount $DMG_NAME from local storage..."
+        hdiutil attach "$DMG_NAME" -mountpoint "$MOUNT_POINT" -nobrowse
+        # Check if the mount was successful
+        if [ $? -ne 0 ]; then
+            echo "Could not find $DMG_NAME locally."
+            # Download XAMPP
+            echo "Downloading $DMG_NAME..."
+            curl -L -o "$DMG_NAME" "$DMG_URL"
+        fi
 
         # Mount the .dmg file
         echo "Mounting $DMG_NAME..."
