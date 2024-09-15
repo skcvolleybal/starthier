@@ -2,7 +2,12 @@
 Deze repo bevat alle instructies om je lokale DEV in te richten. 
 
 # Heb je een Mac? 
-Run dan "bash mac_install.sh"
+Run dan "bash mac_install.sh". Dit script: 
+- Downloadt en installeert XAMPP, WordPress, TeamPortal en TC-app plus alle dependencies
+- NB: bestaande files in de XAMPP/htdocs map worden volledig gewist!
+
+# Heb je Windows? 
+Run "windows_setup.ps", garanties tot aan de deur. Script is niet getest!
 
 # Geen Mac?
 Zie al het onderstaande

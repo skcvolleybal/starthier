@@ -211,7 +211,6 @@ create_wordpress_database () {
 
     echo "Creating WordPress database..."
 
-
     cd "${TARGET_DIR}/../bin"
 
     ./mysql -u$DB_USER -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $WORDPRESS_DB_NAME;"
