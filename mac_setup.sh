@@ -144,6 +144,10 @@ set_mysql_root_password() {
 
     fi
 
+    # Make sure PHPMyAdmin knows the new password
+    sudo sed -i 's/$cfg\[\'Servers\'\]\[$i\]\[\'password\'\] = '\'''\''/$cfg\[\'Servers\'\]\[$i\]\[\'password\'\] = '\''password'\''/' /Applications/XAMPP/xamppfiles/phpmyadmin/config.inc.php
+
+
 
 }
 
@@ -354,19 +358,11 @@ install_tc_app () {
 }
 
 
-
-
-
-start_teamportal () {
-    cd "${TARGET_DIR}/team-portal/"
-    
-    # Kill running processes on port 4200
-    kill -9 $(lsof -ti:4200) 2>&1 >/dev/null
-
-    # Start teamportal on port 4200
-    npm run ng serve
-
+summarize () {
+    echo "All done!"
+    echo "run 'npm run ng serve' in /team-portal to start teamportal"
 }
+
 
 define_variables
 install_brew
@@ -381,6 +377,7 @@ create_teamportal_database
 create_tcapp_database
 install_teamportal
 install_tc_app
-start_teamportal
+summarize
+
 
 
