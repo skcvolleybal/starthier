@@ -79,7 +79,7 @@ install_xampp() {
 
         # Wait for the installation to complete
         echo "Waiting for installation to complete..."
-        echo "Once you have installed XAMPP, press Enter to continue. We'll start up Apache and MySQL for you."
+        echo "Once you have installed and launched XAMPP, press Enter to continue. We'll start up Apache and MySQL for you, if XAMPP hasn't done that yet."
 
         # Wait for user input
         read
@@ -107,14 +107,8 @@ install_xampp() {
         echo "Line already exists in .zshrc"
     fi
 
-
-    
-    # Stopping all MySQLD Servers
-    echo "Enter your password to kill all running MySQL instances:"
-    sudo killall mysqld
     cd "${TARGET_DIR}/../bin/"
-    
-    
+ 
     echo "Starting MySQL and Apache..."
     sudo ./mysql.server start
 
