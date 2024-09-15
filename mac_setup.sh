@@ -2,7 +2,7 @@ define_variables() {
     TARGET_DIR="/Applications/XAMPP/xamppfiles/htdocs"
     WORDPRESS_DB_NAME="wordpress_db"
     DB_USER="root"
-    DB_PASSWORD=""
+    DB_PASSWORD="password"
     DB_HOST="127.0.0.1"
     WP_URL="http://localhost/"  # The local URL for your WordPress site
     WP_TITLE="SKC WORDPRESS DEV SITE"
@@ -10,17 +10,15 @@ define_variables() {
     WP_ADMIN_PASS="password"
     WP_ADMIN_EMAIL="webcie@skcvolleybal.nl"
 
-    WP_DIR=$TARGET_DIR
-
     TEAMPORTAL_DB_NAME="teamportal_db"
+    TCAPP_DB_NAME="tcapp_db"
 
-    DMG_URL="https://sourceforge.net/projects/xampp/files/XAMPP%20Mac%20OS%20X/8.2.4/xampp-osx-8.2.4-0-installer.dmg"
-    # DMG_URL="http://localhost/xampp-osx-8.2.4-0-installer.dmg" # For testing purposes
-    DMG_NAME="xampp-osx-8.2.4-0-installer.dmg"
-    INSTALLER_NAME="xampp-osx-8.2.4-0-installer.app"
+    XAMPP_NAME="xampp-osx-8.2.4-0-installer"
+    DMG_NAME="${XAMPP_NAME}.dmg"
+    DMG_URL="https://sourceforge.net/projects/xampp/files/XAMPP%20Mac%20OS%20X/8.2.4/${DMG_NAME}"
+    INSTALLER_NAME="${XAMPP_NAME}.app"
     MOUNT_POINT="/Volumes/XAMPP"
     XAMPP_INSTALL_DIRECTORY="/Applications/XAMPP/xamppfiles"
-
 }
 
 install_brew() {
@@ -32,8 +30,6 @@ install_brew() {
 }
 
 is_xampp_present() {
-
-
     # Check if the directory exists
     if [ -d "$XAMPP_INSTALL_DIRECTORY" ]; then
         # Check if the directory contains any files
@@ -112,12 +108,14 @@ install_xampp() {
     fi
 
 
-    echo "Starting MySQL and Apache..."
     
     # Stopping all MySQLD Servers
+    echo "Enter your password to kill all running MySQL instances:"
     sudo killall mysqld
-    # sudo /Applications/XAMPP/xamppfiles/bin/mysql.server start
     cd "${TARGET_DIR}/../bin/"
+    
+    
+    echo "Starting MySQL and Apache..."
     sudo ./mysql.server start
 
     # Stopping all apache servers
@@ -127,6 +125,26 @@ install_xampp() {
 }
 
 
+set_mysql_root_password() {
+    cd "${TARGET_DIR}/../bin"
+
+    echo "⚠️ JUST PRESS ENTER FOR THIS PASSWORD BELOW"
+
+    ./mysql -u"$DB_USER" -p"" -e "ALTER USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD'; FLUSH PRIVILEGES;"
+    if [ $? -eq 0 ]; then
+        echo "MySQL root password changed to $DB_PASSWORD"
+    else
+        ./mysql -u"$DB_USER" -p"$DB_PASSWORD" -e "ALTER USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD'; FLUSH PRIVILEGES;"
+            if [ $? -eq 0 ]; then
+                echo "MySQL root password unchanged: $DB_PASSWORD. Continuing"
+            else
+                echo "Could not change root password! This script will not run properly."
+            fi
+
+    fi
+
+
+}
 
 setup_node_composer_wpcli() {
     # Install Node 18
@@ -191,8 +209,7 @@ create_wordpress_database () {
 
     cd "${TARGET_DIR}/../bin"
 
-    echo "⚠️ THIS IS NOT YOUR PASSWORD; IT'S THE EMPTY DATABASE PASSWORD. JUST PRESS ENTER FOR THIS PASSWORD BELOW"
-    ./mysql -u$DB_USER -p"" -e "CREATE DATABASE IF NOT EXISTS $WORDPRESS_DB_NAME;"
+    ./mysql -u$DB_USER -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $WORDPRESS_DB_NAME;"
     if [ $? -eq 0 ]; then
         echo "Database '$WORDPRESS_DB_NAME' created successfully."
     else
@@ -202,9 +219,7 @@ create_wordpress_database () {
 }
 
 setup_wp_config_file () {
-    # Step 2: Set up wp-config.php for WordPress
-    cd "$WP_DIR" || exit
-    echo "Set path to $WP_DIR"
+    cd "$TARGET_DIR" || exit
 
     # Check if wp-config.php exists; if not, create it from wp-config-sample.php
     if [ ! -f wp-config.php ]; then
@@ -220,7 +235,7 @@ setup_wp_config_file () {
     # Replace placeholders in wp-config.php with actual values
     sed -i "" "s/database_name_here/$WORDPRESS_DB_NAME/" wp-config.php
     sed -i "" "s/username_here/$DB_USER/" wp-config.php
-    sed -i "" "s/password_here/$DB_PASS/" wp-config.php
+    sed -i "" "s/password_here/$DB_PASSWORD/" wp-config.php
     sed -i "" "s/localhost/$DB_HOST/" wp-config.php
 
     echo "Resulting wp-config.php:"
@@ -259,8 +274,7 @@ create_teamportal_database () {
 
     cd "${TARGET_DIR}/../bin"
 
-    echo "⚠️ THIS IS NOT YOUR PASSWORD; IT'S THE EMPTY DATABASE PASSWORD. JUST PRESS ENTER FOR THIS PASSWORD BELOW"
-    ./mysql -u$DB_USER -p -e "CREATE DATABASE IF NOT EXISTS $TEAMPORTAL_DB_NAME;"
+    ./mysql -u$DB_USER -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $TEAMPORTAL_DB_NAME;"
     if [ $? -eq 0 ]; then
         echo "Database '$TEAMPORTAL_DB_NAME' created successfully."
     else
@@ -270,16 +284,74 @@ create_teamportal_database () {
 }
 
 
+create_tcapp_database () {
+
+    echo "Creating Tcapp database..."
+    cd "${TARGET_DIR}/../bin"
+
+    ./mysql -u$DB_USER -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $TCAPP_DB_NAME;"
+    if [ $? -eq 0 ]; then
+        echo "Database '$TCAPP_DB_NAME' created successfully."
+    else
+        echo "Failed to create database."
+        exit 1
+    fi
+}
+
 install_teamportal () {
     cd $TARGET_DIR
     git clone https://github.com/skcvolleybal/team-portal
+    
+    # Install NPM packages
     cd "${TARGET_DIR}/team-portal/"
     npm i 
+    
+    # Install PHP packages
     cd "${TARGET_DIR}/team-portal/php"
-    cp .env.example .env
     /Applications/XAMPP/xamppfiles/bin/php /opt/homebrew/opt/composer/bin/composer update 
     /Applications/XAMPP/xamppfiles/bin/php /opt/homebrew/opt/composer/bin/composer install 
+
+    # Fix .env file
+    cp .env.example .env
+
+    # Not yet working
+    sed -i '' 's|WORDPRESS_PATH=C:\\\\laragon\\www\\testskc|WORDPRESS_PATH=/Applications/XAMPP/xamppfiles/htdocs|g' .env
+
 }
+
+install_tc_app () {
+    cd $TARGET_DIR
+    git clone https://github.com/skcvolleybal/tc-app
+    
+    # Install NPM packages
+    cd "${TARGET_DIR}/tc-app/"
+    npm i 
+    
+    # Install PHP packages
+    cd "${TARGET_DIR}/tc-app/"
+    /Applications/XAMPP/xamppfiles/bin/php /opt/homebrew/opt/composer/bin/composer update 
+    /Applications/XAMPP/xamppfiles/bin/php /opt/homebrew/opt/composer/bin/composer install 
+
+    # Fix .env file
+    cp .env.example .env
+
+    # Not yet working
+    sed -i '' 's|WORDPRESS_PATH=C:\\\\laragon\\www\\testskc|WORDPRESS_PATH=/Applications/XAMPP/xamppfiles/htdocs|g' .env
+
+    SQL_FILE="${TARGET_DIR}/tc-app/database_install.sql"
+    
+    cd "${TARGET_DIR}/../bin"
+    # Run the SQL script to create tables
+    ./mysql -u"$DB_USER" -p"$DB_PASSWORD" "$TCAPP_DB_NAME" < "$SQL_FILE"
+    if [ $? -eq 0 ]; then
+        echo "Tables created successfully from '$SQL_FILE'."
+    else
+        echo "Failed to create tables from '$SQL_FILE'."
+        exit 1
+    fi
+
+}
+
 
 
 
@@ -288,7 +360,7 @@ start_teamportal () {
     cd "${TARGET_DIR}/team-portal/"
     
     # Kill running processes on port 4200
-    kill -9 $(lsof -ti:4200)
+    kill -9 $(lsof -ti:4200) 2>&1 >/dev/null
 
     # Start teamportal on port 4200
     npm run ng serve
@@ -298,13 +370,16 @@ start_teamportal () {
 define_variables
 install_brew
 install_xampp
+set_mysql_root_password
 setup_node_composer_wpcli
 download_wordpress_and_plugins
 create_wordpress_database
 setup_wp_config_file
 install_wordpress
 create_teamportal_database
+create_tcapp_database
 install_teamportal
+install_tc_app
 start_teamportal
 
 
