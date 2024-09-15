@@ -96,16 +96,21 @@ install_xampp() {
     fi
 
     echo "Adding XAMPP PHP to path"
-    # Define the path to the XAMPP PHP binary
-    XAMPP_PHP_PATH="/Applications/XAMPP/xamppfiles/bin"
+ 
+    #!/bin/bash
 
-    # Add XAMPP PHP path to the PATH environment variable
-    if ! echo "$PATH" | grep -q "$XAMPP_PHP_PATH"; then
-        export PATH="$XAMPP_PHP_PATH:$PATH"
-        echo "XAMPP PHP path added to PATH"
+    # Define the line to be added
+    LINE="export PATH=/Applications/XAMPP/xamppfiles/bin:\$PATH"
+
+    # Check if the line already exists in .zshrc
+    if ! grep -Fxq "$LINE" ~/.zshrc; then
+        # If not, add the line
+        echo "$LINE" >> ~/.zshrc
+        echo "Line added to .zshrc"
     else
-        echo "XAMPP PHP path already in PATH"
+        echo "Line already exists in .zshrc"
     fi
+
 
     echo "Starting MySQL and Apache..."
     
@@ -164,7 +169,7 @@ download_wordpress_and_plugins() {
     # Clean up the zip file and empty wordpress directory
     rm -rf wordpress latest.zip
 
-    Download Pods plugin
+    # Download Pods plugin
     echo "Downloading Pods plugin..."
     cd "${TARGET_DIR}/wp-content/plugins" || exit
     curl -L -o pods.zip https://downloads.wordpress.org/plugin/pods.latest-stable.zip
@@ -187,7 +192,7 @@ create_wordpress_database () {
     cd "${TARGET_DIR}/../bin"
 
     echo "⚠️ THIS IS NOT YOUR PASSWORD; IT'S THE EMPTY DATABASE PASSWORD. JUST PRESS ENTER FOR THIS PASSWORD BELOW"
-    ./mysql -u$DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $WORDPRESS_DB_NAME;"
+    ./mysql -u$DB_USER -p"" -e "CREATE DATABASE IF NOT EXISTS $WORDPRESS_DB_NAME;"
     if [ $? -eq 0 ]; then
         echo "Database '$WORDPRESS_DB_NAME' created successfully."
     else
@@ -255,7 +260,7 @@ create_teamportal_database () {
     cd "${TARGET_DIR}/../bin"
 
     echo "⚠️ THIS IS NOT YOUR PASSWORD; IT'S THE EMPTY DATABASE PASSWORD. JUST PRESS ENTER FOR THIS PASSWORD BELOW"
-    ./mysql -u$DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $TEAMPORTAL_DB_NAME;"
+    ./mysql -u$DB_USER -p -e "CREATE DATABASE IF NOT EXISTS $TEAMPORTAL_DB_NAME;"
     if [ $? -eq 0 ]; then
         echo "Database '$TEAMPORTAL_DB_NAME' created successfully."
     else
@@ -270,16 +275,22 @@ install_teamportal () {
     git clone https://github.com/skcvolleybal/team-portal
     cd "${TARGET_DIR}/team-portal/"
     npm i 
-    cd php
-    composer install 
+    cd "${TARGET_DIR}/team-portal/php"
     cp .env.example .env
-
-
+    /Applications/XAMPP/xamppfiles/bin/php /opt/homebrew/opt/composer/bin/composer update 
+    /Applications/XAMPP/xamppfiles/bin/php /opt/homebrew/opt/composer/bin/composer install 
 }
+
+
 
 
 start_teamportal () {
     cd "${TARGET_DIR}/team-portal/"
+    
+    # Kill running processes on port 4200
+    kill -9 $(lsof -ti:4200)
+
+    # Start teamportal on port 4200
     npm run ng serve
 
 }
