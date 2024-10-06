@@ -34,7 +34,7 @@ Deze plugins zijn nodig om Teams, Commissies en Fotopagina's werkend te krijgen.
 - In je lokale development WordPress, installeer en activeer de volgende plugin: 
 	- Pods - Aangepaste Content Typen en Velden
 - Ga naar de productie WordPress versie > Pods > Bewerk Pods
-- Kijk hoe de productie Pods (Commissies, Fotopagina's, Teams, User) zijn ingericht. Bouw de pods na in je lokale Wordpress. Belangrijkste pods zijn Teams en User, zonder deze twee werkt Team-Portal niet. 
+- Kijk hoe de productie Pods (Commissies, Fotopagina's, Teams, User) zijn ingericht. Bouw de pods na in je lokale Wordpress (**Je kan ook de alle pods importeren via een JSON string**). Belangrijkste pods zijn Teams en User, zonder deze twee werkt Team-Portal niet. 
 - Activeer de Pods Roles and Capabilities Tool, ga hiervoor naar Pods Admin > Components (Onderdelen) 
 - Schakel alle rechten in voor de Administrator rol, ga hiervoor naar Pods Admin > Roles & Capabilities
 - De Commissies, Fotopagina's en Teams zijn nu zichtbaar links in je menu sidebar
