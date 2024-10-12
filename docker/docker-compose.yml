@@ -29,7 +29,8 @@ services:
       MYSQL_PASSWORD: wordpress
     volumes:
       - db_data:/var/lib/mysql
-      - ./team-portal/php/scripts/Seeder_data.sql:/docker-entrypoint-initdb.d/Seeder_data.sql # Making the seeder SQL available in the DB container
+      - ./team-portal/php/scripts/Seeder_data.sql:/docker-entrypoint-initdb.d/Seeder_data.sql # Very nice. If this container is started with an empty volume, by mounting the .sql file in docker-entrypoint-initdb.d, MySQL wil automatically execute the SQL file. 
+      - ./tc-app/database_install.sql:/docker-entrypoint-initdb.d/database_install.sql # 
     ports: 
       - "3306:3306"  # Expose MySQL port to the host
 
