@@ -1,0 +1,73 @@
+services:
+  # Apache web server with WordPress
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+
+  # MySQL Database shared between WordPress, Team-Portal, and TC-App
+  db:
+    # build: mysql
+    image: mysql:5.7
+    platform: linux/x86_64/v8
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./team-portal/php/scripts/Seeder_data.sql:/docker-entrypoint-initdb.d/Seeder_data.sql # Making the seeder SQL available in the DB container
+    ports: 
+      - "3306:3306"  # Expose MySQL port to the host
+
+
+  # Team Portal Service (PHP & Angular)
+  team-portal:
+    build:
+      context: ./team-portal
+      dockerfile: ./Dockerfile #  Dockerfile exists in the repo
+    container_name: team-portal
+    depends_on:
+      - db
+    ports:
+      - "4200:4200" 
+    environment:
+      DATABASE_URL: mysql://wordpress:wordpress@db:3306/wordpress
+    volumes:
+      - ./team-portal:/var/www/html
+
+  tc-app:
+    build:
+      context: ./tc-app
+      dockerfile: Dockerfile  # Specify the Dockerfile if it's named differently or located elsewhere
+    ports:
+      - "80:80"  # Expose port 80
+    volumes:
+      - ./tc-app:/var/www/html
+    environment:
+      # Add environment variables here if needed
+      NODE_ENV: development
+      # COMPOSER_MEMORY_LIMIT: -1  # Example of setting Composer memory limit
+    networks:
+      - app-network  # Use a custom network for communication if needed
+
+volumes:
+  wordpress_data:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
