@@ -13,7 +13,7 @@ services:
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
     volumes:
-      - wordpress_data:/var/www/html
+      - ./wordpress_data:/var/www/html
 
   # MySQL Database shared between WordPress, Team-Portal, and TC-App
   db:
@@ -50,6 +50,18 @@ services:
     volumes:
       - ./team-portal:/var/www/html
 
+  team-portal-backend:
+    image: webdevops/php-apache-dev:8.2
+    ports:
+      - 81:80
+    # environment:
+    #   - WORDPRESS_PATH: /app
+    volumes:
+      - ./team-portal/php:/app
+      - ./wordpress_data:/app/wordpress
+    # command: bash -c "cd /app && composer install && apache2-foreground"
+
+
   tc-app:
     build:
       context: ./tc-app
@@ -58,15 +70,16 @@ services:
       - "80:80"  # Expose port 80
     volumes:
       - ./tc-app:/var/www/html
+      - ./wordpress_data:/var/www
     environment:
       # Add environment variables here if needed
       NODE_ENV: development
       # COMPOSER_MEMORY_LIMIT: -1  # Example of setting Composer memory limit
+      WORDPRESS_PATH: /var/www 
     networks:
       - app-network  # Use a custom network for communication if needed
 
 volumes:
-  wordpress_data:
   db_data:
 
 networks:
