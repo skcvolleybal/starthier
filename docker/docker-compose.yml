@@ -51,13 +51,13 @@ services:
       - ./team-portal:/var/www/html
 
   team-portal-backend:
-    image: webdevops/php-apache-dev:8.2
+    image: webdevops/php-apache-dev:8.1
     ports:
       - 81:80
     # environment:
     #   - WORDPRESS_PATH: /app
     volumes:
-      - ./team-portal/php:/app
+      - ./team-portal:/app/team-portal
       - ./wordpress_data:/app/wordpress
     # command: bash -c "cd /app && composer install && apache2-foreground"
 
