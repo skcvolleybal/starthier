@@ -1,74 +1,85 @@
 services:
-  # Apache web server with WordPress
-  wordpress:
-    image: wordpress:latest
-    container_name: wordpress
-    depends_on:
-      - db
-    ports:
-      - "8080:80"
-    environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
-    volumes:
-      - ./wordpress_data:/var/www/html
 
   # MySQL Database shared between WordPress, Team-Portal, and TC-App
-  db:
-    # build: mysql
-    image: mysql:5.7
-    platform: linux/x86_64/v8
-    container_name: db
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./team-portal/php/scripts/Seeder_data.sql:/docker-entrypoint-initdb.d/Seeder_data.sql # Very nice. If this container is started with an empty volume, Docker mounts the .sql file in docker-entrypoint-initdb.d and MySQL wil automatically execute any SQL file in this directory. So the database is seeded automatically. 
-      - ./tc-app/database_install.sql:/docker-entrypoint-initdb.d/database_install.sql # 
-    ports: 
-      - "3306:3306"  # Expose MySQL port to the host
+  # db:
+  #   # build: mysql
+  #   image: mysql:5.7
+  #   platform: linux/x86_64/v8
+  #   container_name: db
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: rootpassword
+  #     MYSQL_DATABASE: wordpress
+  #     MYSQL_USER: wordpress
+  #     MYSQL_PASSWORD: wordpress
+  #   volumes:
+  #     - db_data:/var/lib/mysql
+  #     - ./team-portal/php/scripts/Seeder_data.sql:/docker-entrypoint-initdb.d/Seeder_data.sql # Very nice. If this container is started with an empty volume, Docker mounts the .sql file in docker-entrypoint-initdb.d and MySQL wil automatically execute any SQL file in this directory. So the database is seeded automatically. 
+  #     - ./tc-app/database_install.sql:/docker-entrypoint-initdb.d/database_install.sql # 
+  #   ports: 
+  #     - "3306:3306"  # Expose MySQL port to the host
 
 
-  # Team Portal Service (PHP & Angular)
-  team-portal-frontend:
-    build:
-      context: ./team-portal
-      dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
-    container_name: team-portal-frontend
-    depends_on:
-      - team-portal-backend
-    ports:
-      - "4200:4200" 
-    volumes:
-      - ./team-portal:/var/www/html
+  # # Apache web server with WordPress
+  # wordpress:
+  #   image: wordpress:latest
+  #   container_name: wordpress
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - "8080:80"
+  #   environment:
+  #     WORDPRESS_DB_HOST: db:3306
+  #     WORDPRESS_DB_USER: wordpress
+  #     WORDPRESS_DB_PASSWORD: wordpress
+  #     WORDPRESS_DB_NAME: wordpress
+  #   volumes:
+  #     - ./wordpress_data:/var/www/html
 
-  team-portal-backend:
-    image: webdevops/php-apache-dev:8.1
-    depends_on:
-      - db
-    ports:
-      - 80:80
-    # environment:
-    #   - WORDPRESS_PATH: /app
-    environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
-    volumes:
-      - ./wordpress_data:/app/
-      - ./team-portal:/app/team-portal/
-      - ./team-portal/php/.env.example:/app/team-portal/php/.env
-    command: bash -c "cd /app/team-portal/php && composer install && /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
+  # # Team Portal Service (PHP & Angular)
+  # team-portal-frontend:
+  #   build:
+  #     context: ./team-portal
+  #     dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
+  #   container_name: team-portal-frontend
+  #   depends_on:
+  #     - team-portal-backend
+  #   ports:
+  #     - "4200:4200" 
+  #   volumes:
+  #     - ./team-portal:/var/www/html
 
+  # team-portal-backend:
+  #   image: webdevops/php-apache-dev:8.1
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - 80:80
+  #   # environment:
+  #   #   - WORDPRESS_PATH: /app
+  #   environment:
+  #     WORDPRESS_DB_HOST: db:3306
+  #     WORDPRESS_DB_USER: wordpress
+  #     WORDPRESS_DB_PASSWORD: wordpress
+  #     WORDPRESS_DB_NAME: wordpress
+  #   volumes:
+  #     - ./wordpress_data:/app/
+  #     - ./team-portal:/app/team-portal/
+  #     - ./team-portal/php/.env.example:/app/team-portal/php/.env
 
-  tc-app:
+  #   command: bash -c "cd /app/team-portal/php && composer install && /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
+
+  # tc-app-backend:
+  #   image: webdevops/php-apache-dev:8.1
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - ./wordpress_data:/app/
+  #     - ./tc-app:/app/tc-app/
+  #     - ./tc-app/.env.example:/app/tc-app/.env
+  #   command: bash -c "cd /app/tc-app && composer install && /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
+
+  tc-app-frontend:
     build:
       context: ./tc-app
       dockerfile: Dockerfile 
@@ -76,11 +87,10 @@ services:
       - "81:80"  # Expose port 80
     volumes:
       - ./tc-app:/var/www/html
-      - ./wordpress_data:/var/www
     environment:
       # Add environment variables here if needed
       NODE_ENV: development
-      WORDPRESS_PATH: /var/www 
+      
 
 volumes:
   db_data:
