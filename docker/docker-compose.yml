@@ -36,52 +36,52 @@ services:
 
 
   # Team Portal Service (PHP & Angular)
-  team-portal:
+  team-portal-frontend:
     build:
       context: ./team-portal
-      dockerfile: ./Dockerfile #  Dockerfile exists in the repo
-    container_name: team-portal
+      dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
+    container_name: team-portal-frontend
     depends_on:
-      - db
+      - team-portal-backend
     ports:
       - "4200:4200" 
-    environment:
-      DATABASE_URL: mysql://wordpress:wordpress@db:3306/wordpress
     volumes:
       - ./team-portal:/var/www/html
 
   team-portal-backend:
     image: webdevops/php-apache-dev:8.1
+    depends_on:
+      - db
     ports:
-      - 81:80
+      - 80:80
     # environment:
     #   - WORDPRESS_PATH: /app
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
     volumes:
-      - ./team-portal:/app/team-portal
-      - ./wordpress_data:/app/wordpress
-    # command: bash -c "cd /app && composer install && apache2-foreground"
+      - ./wordpress_data:/app/
+      - ./team-portal:/app/team-portal/
+      - ./team-portal/php/.env.example:/app/team-portal/php/.env
+    command: bash -c "cd /app/team-portal/php && composer install && /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
 
 
   tc-app:
     build:
       context: ./tc-app
-      dockerfile: Dockerfile  # Specify the Dockerfile if it's named differently or located elsewhere
+      dockerfile: Dockerfile 
     ports:
-      - "80:80"  # Expose port 80
+      - "81:80"  # Expose port 80
     volumes:
       - ./tc-app:/var/www/html
       - ./wordpress_data:/var/www
     environment:
       # Add environment variables here if needed
       NODE_ENV: development
-      # COMPOSER_MEMORY_LIMIT: -1  # Example of setting Composer memory limit
       WORDPRESS_PATH: /var/www 
-    networks:
-      - app-network  # Use a custom network for communication if needed
 
 volumes:
   db_data:
 
-networks:
-  app-network:
-    driver: bridge
