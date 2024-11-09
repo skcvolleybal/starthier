@@ -36,7 +36,7 @@ services:
     volumes:
       - ./wordpress_data:/var/www/html
 
-  Team Portal Service (PHP & Angular)
+  # Team Portal Service (PHP & Angular)
   team-portal-frontend:
     build:
       context: ./team-portal
