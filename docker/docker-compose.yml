@@ -20,7 +20,7 @@ services:
       - "3306:3306"  # Expose MySQL port to the host
 
 
-  Apache web server with WordPress
+  # Apache web server with WordPress
   wordpress:
     image: wordpress:latest
     container_name: wordpress
