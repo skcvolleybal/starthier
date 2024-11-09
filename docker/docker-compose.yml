@@ -20,35 +20,35 @@ services:
       - "3306:3306"  # Expose MySQL port to the host
 
 
-  # Apache web server with WordPress
-  # wordpress:
-  #   image: wordpress:latest
-  #   container_name: wordpress
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - "8080:80"
-  #   environment:
-  #     WORDPRESS_DB_HOST: db:3306
-  #     WORDPRESS_DB_USER: wordpress
-  #     WORDPRESS_DB_PASSWORD: wordpress
-  #     WORDPRESS_DB_NAME: wordpress
-  #   volumes:
-  #     - ./wordpress_data:/var/www/html
+  Apache web server with WordPress
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./wordpress_data:/var/www/html
 
-  # Team Portal Service (PHP & Angular)
-  # team-portal-frontend:
-  #   build:
-  #     context: ./team-portal
-  #     dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
-  #   container_name: team-portal-frontend
-  #   depends_on:
-  #     - team-portal-tc-app-backend
-  #   ports:
-  #     - "4200:4200" 
-  #   volumes:
-  #     - ./team-portal:/app
-  #     - /app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
+  Team Portal Service (PHP & Angular)
+  team-portal-frontend:
+    build:
+      context: ./team-portal
+      dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
+    container_name: team-portal-frontend
+    depends_on:
+      - team-portal-tc-app-backend
+    ports:
+      - "4200:4200" 
+    volumes:
+      - ./team-portal:/app
+      - /app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
       
 
   team-portal-tc-app-backend:
