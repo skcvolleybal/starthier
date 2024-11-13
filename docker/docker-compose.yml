@@ -35,21 +35,44 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - ./wordpress_data:/var/www/html
-    # command: |
-      # bash -c "docker-entrypoint.sh apache2-foreground && wp plugin install pods --activate"
 
-    # Initialize Pods plugin and keep Apache running in the foreground
+  # WP-CLI container
+  wpcli:
+    image: wordpress:cli
+    container_name: wpcli
+    depends_on:
+      - wordpress
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./wordpress_data:/var/www/html
     entrypoint: >
       sh -c "
-        if [ ! -f /usr/local/bin/wp ]; then
-          curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar &&
-          chmod +x wp-cli.phar &&
-          mv wp-cli.phar /usr/local/bin/wp;
-        fi
         sleep 15 &&
+        # Ensure required plugins are installed and activated
         wp plugin is-installed pods --path=/var/www/html --allow-root ||
         wp plugin install pods --activate --path=/var/www/html --allow-root &&
-        docker-entrypoint.sh apache2-foreground
+        wp plugin is-installed members --path=/var/www/html --allow-root ||
+        wp plugin install members --activate --path=/var/www/html --allow-root &&
+        
+        # Create custom roles
+        wp role create beheerder 'Beheerder'--allow-root --path=/var/www/html &&
+        wp role create barcie 'Barcie'--allow-root --path=/var/www/html &&
+        wp role create bestuur 'Bestuur'--allow-root --path=/var/www/html &&
+        wp role create commissieco 'CommissieCo'--allow-root --path=/var/www/html &&
+        wp role create customer 'Customer'--allow-root --path=/var/www/html &&
+        wp role create lustrumcie 'LustrumCie'--allow-root --path=/var/www/html &&
+        wp role create paparazcie 'PaparazCie'--allow-root --path=/var/www/html &&
+        wp role create scheidsco 'ScheidsCo'--allow-root --path=/var/www/html &&
+        wp role create vendor 'Vendor'--allow-root --path=/var/www/html &&
+        wp role create shop 'Shop'--allow-root --path=/var/www/html &&
+        wp role create abonnee 'Abonnee'--allow-root --path=/var/www/html &&
+        wp role create tc 'TC'--allow-root --path=/var/www/html &&
+        wp role create teamcoordinator 'Teamcoordinator'--allow-root --path=/var/www/html &&
+        wp role create webcie 'WebCie'--allow-root --path=/var/www/html
       "
 
   # Team Portal Service (PHP & Angular)
