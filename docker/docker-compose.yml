@@ -22,7 +22,7 @@ services:
 
   # Apache web server with WordPress
   wordpress:
-    image: wordpress:latest
+    image: wordpress:php8.1
     container_name: wordpress
     depends_on:
       - db
@@ -35,6 +35,22 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - ./wordpress_data:/var/www/html
+    # command: |
+      # bash -c "docker-entrypoint.sh apache2-foreground && wp plugin install pods --activate"
+
+    # Initialize Pods plugin and keep Apache running in the foreground
+    entrypoint: >
+      sh -c "
+        if [ ! -f /usr/local/bin/wp ]; then
+          curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar &&
+          chmod +x wp-cli.phar &&
+          mv wp-cli.phar /usr/local/bin/wp;
+        fi
+        sleep 15 &&
+        wp plugin is-installed pods --path=/var/www/html --allow-root ||
+        wp plugin install pods --activate --path=/var/www/html --allow-root &&
+        docker-entrypoint.sh apache2-foreground
+      "
 
   # Team Portal Service (PHP & Angular)
   team-portal-frontend:
