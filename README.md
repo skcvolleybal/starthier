@@ -9,7 +9,7 @@ Run ./start.sh in de Docker map.
 # Windows
 Run start.bat in de Docker map. 
 
-# To-do (in Docker trekken): 
+### Nog to-do Docker: 
 - Kijk hoe de productie Pods (Commissies, Fotopagina's, Teams, User) zijn ingericht. Bouw de pods na in je lokale Wordpress (**Je kan ook de alle pods importeren via een JSON string**). Belangrijkste pods zijn Teams en User, zonder deze twee werkt Team-Portal niet. 
 - Activeer de Pods Roles and Capabilities Tool, ga hiervoor naar Pods Admin > Components (Onderdelen) 
 - Schakel alle rechten in voor de Administrator rol, ga hiervoor naar Pods Admin > Roles & Capabilities
