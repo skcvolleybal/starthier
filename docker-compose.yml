@@ -42,6 +42,7 @@ services:
     container_name: wpcli
     depends_on:
       - wordpress
+      - team-portal-frontend
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wordpress
@@ -114,6 +115,7 @@ services:
 
   team-portal-tc-app-backend:
     image: webdevops/php-apache-dev:8.1
+    container_name: team-portal-tc-app-backend
     depends_on:
       - db
     ports:
