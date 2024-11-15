@@ -53,6 +53,9 @@ services:
     entrypoint: >
       sh -c "
         sleep 15 &&
+        wp core install --url='http://localhost:8080' --title='SKC Volleybal Dev Site' --admin_user='admin' --admin_password='secret123' --admin_email='webcie@skcvolleybal.nl' --path='/var/www/html' --skip-email &&
+        wp option update blogdescription 'Development site for SKC Volleybal'
+
         # Ensure required plugins are installed and activated
         wp plugin is-installed pods --path=/var/www/html --allow-root ||
         wp plugin install pods --activate --path=/var/www/html --allow-root &&
