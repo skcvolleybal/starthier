@@ -80,7 +80,6 @@ services:
       - db
     ports:
       - 80:80
-      - 9003:9003
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
