@@ -8,11 +8,16 @@ echo "Checking if MySQL is ready..."
 wp core install --url='http://localhost:8080' --title='SKC Volleybal Dev Site' --admin_user='webcie' --admin_password='webcie' --admin_email='webcie@skcvolleybal.nl' --path='/var/www/html' --skip-email
 wp option update blogdescription 'Development site for SKC Volleybal' 
 
-# Run WP-CLI commands here
+
 # Example: Install Pods plugin
 echo "Installing Pods plugin..."
 wp plugin install pods --allow-root --path=/var/www/html
 wp plugin install members --allow-root --path=/var/www/html
+
+# Activate them bad boys
+wp plugin activate pods --allow-root --path=/var/www/html
+wp plugin activate members --allow-root --path=/var/www/html
+
 
 # Create custom roles only if they don't already exist
 wp role list --allow-root --path=/var/www/html | grep -q 'beheerder' || wp role create beheerder 'Beheerder' --allow-root --path=/var/www/html &&
