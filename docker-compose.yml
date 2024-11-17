@@ -33,73 +33,10 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - ./wordpress_data:/var/www/html
+      - ./scripts/wordpress_startup.sh:/wordpress_startup.sh
+      - ./scripts/wait-for-it.sh:/wait-for-it.sh
+    command: ["bash", "/wordpress_startup.sh"]
 
-  # WP-CLI container
-  wpcli:
-    image: wordpress:cli
-    container_name: wpcli
-    depends_on:
-      - wordpress
-      - team-portal-frontend
-    environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
-    volumes:
-      - ./wordpress_data:/var/www/html
-    entrypoint: >
-      sh -c "
-        sleep 15 &&
-        wp core install --url='http://localhost:8080' --title='SKC Volleybal Dev Site' --admin_user='webcie' --admin_password='webcie' --admin_email='webcie@skcvolleybal.nl' --path='/var/www/html' --skip-email &&
-        wp option update blogdescription 'Development site for SKC Volleybal' &&
-
-        # Ensure required plugins are installed and activated
-        wp plugin is-installed pods --path=/var/www/html --allow-root ||
-        wp plugin install pods --allow-root &&
-        wp plugin is-installed members --path=/var/www/html --allow-root ||
-        wp plugin install members --allow-root &&
-        wp plugin activate pods --allow-root &&
-        wp plugin activate members --allow-root &&
-
-        # Create custom roles only if they don't already exist
-        wp role list --allow-root --path=/var/www/html | grep -q 'beheerder' || wp role create beheerder 'Beheerder' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'barcie' || wp role create barcie 'Barcie' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'bestuur' || wp role create bestuur 'Bestuur' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'commissieco' || wp role create commissieco 'CommissieCo' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'customer' || wp role create customer 'Customer' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'lustrumcie' || wp role create lustrumcie 'LustrumCie' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'paparazcie' || wp role create paparazcie 'PaparazCie' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'scheidsco' || wp role create scheidsco 'ScheidsCo' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'vendor' || wp role create vendor 'Vendor' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'shop' || wp role create shop 'Shop' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'abonnee' || wp role create abonnee 'Abonnee' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'tc' || wp role create tc 'TC' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'teamcoordinator' || wp role create teamcoordinator 'Teamcoordinator' --allow-root --path=/var/www/html &&
-        wp role list --allow-root --path=/var/www/html | grep -q 'webcie' || wp role create webcie 'WebCie' --allow-root --path=/var/www/html &&
-      
-        #  # Create the custom Pod 'Team'
-        # wp pods add --pod=team --label='Teams' --description='A Pod to store teams' --rest-enable=1 --allow-root --path=/var/www/html &&
-        
-        # # Create the field 'Leden' in the 'Team' Pod which references multiple Users
-        # wp pods field add --pod=team --field_name=leden --type=pick --pick_object=user --pick_format_type=multi --pick_show_icon=1 --pick_show_edit_link=1 --pick_show_view_link=1 --allow-root --path=/var/www/html &&
-        
-        # # Create the field 'Team' in the 'User' Pod that references a single Team
-        # wp pods field add --pod=user --field_name=team --type=pick --pick_object=team --pick_format_type=single --pick_show_icon=1 --pick_show_edit_link=1 --pick_show_view_link=1 --allow-root --path=/var/www/html &&
-
-        # # Optionally add a few example Team items with Leden
-        # wp pods add --pod=team --leden=1 --allow-root --path=/var/www/html &&
-        # wp pods add --pod=team --leden=2 --allow-root --path=/var/www/html &&
-        # wp pods add --pod=team --leden=3 --allow-root --path=/var/www/html &&
-        
-        # # Optionally, link some Users to a Team
-        # wp pods save --pod=user --item=1 --team=1 --allow-root --path=/var/www/html &&
-        # wp pods save --pod=user --item=2 --team=1 --allow-root --path=/var/www/html &&
-        # wp pods save --pod=user --item=3 --team=2 --allow-root --path=/var/www/html
-
-        wp pods pod add --type=post_type --name=team --allow-root
-
-      "
 
   # Team Portal Service (PHP & Angular)
   team-portal-frontend:
@@ -151,11 +88,7 @@ services:
     volumes:
       - ./tc-app:/var/www/html
       - /var/www/html/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
-
-    # environment:
-      # Add environment variables here if needed
-      # NODE_ENV: development
-      
+    
 
 volumes:
   db_data:
