@@ -33,10 +33,29 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - ./wordpress_data:/var/www/html
-      - ./scripts/wordpress_startup.sh:/wordpress_startup.sh
-      - ./scripts/wait-for-it.sh:/wait-for-it.sh
-    command: ["bash", "/wordpress_startup.sh"]
 
+  # WP-CLI container
+  wpcli:
+    image: wordpress:cli
+    container_name: wpcli
+    depends_on:
+      - wordpress
+      - team-portal-frontend
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./wordpress_data:/var/www/html
+      - ./scripts/wait-for-it.sh:/wait-for-it.sh
+      - ./scripts/wordpress_startup.sh:/wordpress_startup.sh
+    # vstm: This is required to run wordpress-cli with the same
+    # user-id as wordpress. This way there are no permission problems
+    # when running the cli
+    user: '33'
+    entrypoint: >
+      sh -c "set -e; cd / && exec ./wordpress_startup.sh"
 
   # Team Portal Service (PHP & Angular)
   team-portal-frontend:
