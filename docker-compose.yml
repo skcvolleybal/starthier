@@ -67,14 +67,14 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
+      # XDEBUG_START_WITH_REQUEST: request
     volumes:
       - ./wordpress_data:/app/
       - ./team-portal:/app/team-portal/
       - ./team-portal/php/.env.example:/app/team-portal/php/.env
       - ./tc-app:/app/tc-app/
       - ./tc-app/.env.example:/app/tc-app/.env
-      - ./scripts/php.webdevops.ini:/opt/docker/etc/php/php.webdevops.ini
-
+      - ./scripts/php.ini:/opt/docker/etc/php/php.ini
     command: bash -c "
       cd /app/team-portal/php && composer install &&
       cd /app/tc-app && composer install &&
