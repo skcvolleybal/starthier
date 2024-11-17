@@ -18,4 +18,4 @@ git clone https://github.com/skcvolleybal/tc-app.git tc-app
 
 # Build and start Docker Compose services
 echo "Building and starting Docker Compose services..."
-docker-compose up --build 
+docker compose up --build 
