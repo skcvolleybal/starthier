@@ -53,6 +53,7 @@ services:
       - /app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
       
 
+  # For debugging: /opt/docker/etc/php has the .ini files
   team-portal-tc-app-backend:
     image: webdevops/php-apache-dev:8.1
     container_name: team-portal-tc-app-backend
@@ -60,6 +61,7 @@ services:
       - db
     ports:
       - 80:80
+      - 9003:9003
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
@@ -71,10 +73,14 @@ services:
       - ./team-portal/php/.env.example:/app/team-portal/php/.env
       - ./tc-app:/app/tc-app/
       - ./tc-app/.env.example:/app/tc-app/.env
+      - ./scripts/php.webdevops.ini:/opt/docker/etc/php/php.webdevops.ini
+
     command: bash -c "
       cd /app/team-portal/php && composer install &&
       cd /app/tc-app && composer install &&
       /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
+
+
 
   tc-app-frontend:
     build:
