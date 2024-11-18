@@ -1,9 +1,8 @@
 services:
 
   # MySQL Database shared between WordPress, Team-Portal, and TC-App
-  db:
+  mysql_db:
     image: mysql
-    container_name: mysql_db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
@@ -11,11 +10,11 @@ services:
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_db:/var/lib/mysql
       - ./team-portal/php/scripts/Seeder_data.sql:/docker-entrypoint-initdb.d/Seeder_data.sql # Very nice. If this container is started with an empty volume, Docker mounts the .sql file in docker-entrypoint-initdb.d and MySQL wil automatically execute any SQL file in this directory. So the database is seeded automatically. 
       - ./tc-app/database_install.sql:/docker-entrypoint-initdb.d/database_install.sql # 
     ports: 
-      - "3306:3306"  # Expose MySQL port to the host
+      - 3306:3306  # Expose MySQL port to the host
 
 
   # Apache web server with WordPress
@@ -25,7 +24,7 @@ services:
     depends_on:
       - db
     ports:
-      - "8080:80"
+      - 8080:80
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
@@ -66,10 +65,10 @@ services:
     depends_on:
       - team-portal-tc-app-backend
     ports:
-      - "4200:4200" 
+      - 4200:4200
     volumes:
       - ./team-portal:/app
-      - /app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
+      - team-portal-node_modules:/app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
       
 
   # For debugging: /opt/docker/etc/php has the .ini files
@@ -111,9 +110,11 @@ services:
       - "8888:80"  # Expose port 80
     volumes:
       - ./tc-app:/var/www/html
-      - /var/www/html/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
+      - tc-app-node_modules:/var/www/html/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
     
 
 volumes:
-  db_data:
+  mysql_db:
+  team-portal-node_modules:
+  tc-app-node_modules:
 
