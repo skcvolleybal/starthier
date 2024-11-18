@@ -7,7 +7,7 @@ echo "Checking if MySQL is ready..."
 
 wp core install --url='http://localhost:8080' --title='SKC Volleybal Dev Site' --admin_user='webcie' --admin_password='webcie' --admin_email='webcie@skcvolleybal.nl' --path='/var/www/html' --skip-email
 wp option update blogdescription 'Development site for SKC Volleybal' 
-
+wp user update webcie --first_name='Webcie' --last-name='SKC' --path='/var/www/html'
 
 # Example: Install Pods plugin
 echo "Installing Pods plugin..."
