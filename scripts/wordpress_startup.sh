@@ -2,6 +2,7 @@
 # (wordpress_)startup.sh
 echo "Checking if MySQL is ready..."
 /wait-for-it.sh -t 0 mysql_db:3306
+sleep 5
 wp core install --url='http://localhost:8080' --title='SKC Volleybal Dev Site' --admin_user='webcie' --admin_password='webcie' --admin_email='webcie@skcvolleybal.nl' --path='/var/www/html' --skip-email
 wp option update blogdescription 'Development site for SKC Volleybal' 
 wp user update webcie --first_name='Webcie' --last-name='SKC' --path='/var/www/html'
