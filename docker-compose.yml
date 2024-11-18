@@ -54,7 +54,9 @@ services:
     # when running the cli
     user: '33'
     entrypoint: >
-      sh -c "set -e; cd / && exec ./wordpress_startup.sh"
+      sh -c "set -e; sh /wordpress_startup.sh"
+    # entrypoint: >
+    #   sh -c "set -e; ls / && bash /wordpress_startup.sh"
 
   # Team Portal Service (PHP & Angular)
   team-portal-frontend:
