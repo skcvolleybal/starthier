@@ -55,10 +55,8 @@ services:
     user: '33'
     entrypoint: >
       sh -c "set -e; sh /wordpress_startup.sh"
-    # entrypoint: >
-    #   sh -c "set -e; ls / && bash /wordpress_startup.sh"
 
-  # Team Portal Service (PHP & Angular)
+  # Team Portal Angular Frontend
   team-portal-frontend:
     build:
       context: ./team-portal
@@ -90,13 +88,15 @@ services:
     volumes:
       - ./wordpress_data:/app/
       - ./team-portal:/app/team-portal/
-      - ./team-portal/php/.env.example:/app/team-portal/php/.env
+      - ./team-portal/php/.env.example:/app/team-portal/php/.env.example
       - ./tc-app:/app/tc-app/
-      - ./tc-app/.env.example:/app/tc-app/.env
+      - ./tc-app/.env.example:/app/tc-app/.env.example
       - ./scripts/php.ini:/opt/docker/etc/php/php.ini
     command: bash -c "
       cd /app/team-portal/php && composer install &&
+      cp /app/team-portal/php/.env.example /app/team-portal/php/.env &&
       cd /app/tc-app && composer install &&
+      cp /app/tc-app/.env.example /app/tc-app/.env &&
       /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
 
 
