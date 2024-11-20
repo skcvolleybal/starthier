@@ -73,7 +73,9 @@ services:
 
   # For debugging: /opt/docker/etc/php has the .ini files
   team-portal-tc-app-backend:
-    image: webdevops/php-apache-dev:8.1
+    build: 
+      context: .
+      dockerfile: Dockerfile-apache-webserver-php-xdebug-node
     container_name: team-portal-tc-app-backend
     depends_on:
       - mysql_db
@@ -96,27 +98,28 @@ services:
       cd /app/team-portal/php && composer install &&
       cp /app/team-portal/php/.env.example /app/team-portal/php/.env &&
       cd /app/tc-app && composer install &&
+      cd /app/tc-app && npm i &&
       cp /app/tc-app/.env.example /app/tc-app/.env &&
       /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
 
 
 
-  tc-app-frontend:
-    build:
-      context: ./tc-app
-      dockerfile: Dockerfile 
-    container_name: tc-app-frontend
-    depends_on:
-      - team-portal-tc-app-backend
-    ports:
-      - "8888:80"  # Expose port 80
-    volumes:
-      - ./tc-app:/var/www/html
-      - tc-app-node_modules:/var/www/html/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
+  # tc-app-frontend:
+  #   build:
+  #     context: ./tc-app
+  #     dockerfile: Dockerfile 
+  #   container_name: tc-app-frontend
+  #   depends_on:
+  #     - team-portal-tc-app-backend
+  #   ports:
+  #     - "8888:80"  # Expose port 80
+  #   volumes:
+  #     - ./tc-app:/var/www/html
+  #     - tc-app-node_modules:/var/www/html/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
     
 
 volumes:
   mysql_db:
   team-portal-node_modules:
-  tc-app-node_modules:
+  # tc-app-node_modules:
 

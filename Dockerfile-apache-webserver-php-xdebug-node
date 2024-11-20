@@ -1,0 +1,17 @@
+# We use a nice PHP image with apache and Xdebug and extend it with Node so we don't have to modify tc-app to be able to handle port numbers in its url
+FROM webdevops/php-apache-dev:8.1
+
+# Update the package index
+RUN apt-get update && apt-get install -y curl
+
+# Add the NodeSource repository for Node.js 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+
+# Install Node.js and npm
+RUN apt-get install -y nodejs
+
+# Verify installation
+RUN node --version && npm --version
+
+# Set the working directory
+WORKDIR /app
