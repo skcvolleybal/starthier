@@ -75,9 +75,7 @@ services:
     volumes:
       - ./wordpress_data:/app/
       - ./team-portal:/app/team-portal/
-      - ./team-portal/php/.env.example:/app/team-portal/php/.env.example
       - ./tc-app:/app/tc-app/
-      - ./tc-app/.env.example:/app/tc-app/.env.example
       - ./scripts/php.ini:/opt/docker/etc/php/php.ini
     command: bash -c "
       cd /app/team-portal/php && composer install &&
