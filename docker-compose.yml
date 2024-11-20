@@ -56,22 +56,8 @@ services:
     entrypoint: >
       sh -c "set -e; sh /wordpress_startup.sh"
 
-  # Team Portal Angular Frontend
-  team-portal-frontend:
-    build:
-      context: ./team-portal
-      dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
-    container_name: team-portal-frontend
-    depends_on:
-      - team-portal-tc-app-backend
-    ports:
-      - 4200:4200
-    volumes:
-      - ./team-portal:/app
-      - team-portal-node_modules:/app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
-      
 
-  # For debugging: /opt/docker/etc/php has the .ini files
+  # For debugging: /opt/docker/etc/php has the .ini files you can modify to make Xdebug do what you like
   team-portal-tc-app-backend:
     build: 
       context: .
@@ -86,7 +72,6 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
-      # XDEBUG_START_WITH_REQUEST: request
     volumes:
       - ./wordpress_data:/app/
       - ./team-portal:/app/team-portal/
@@ -103,23 +88,22 @@ services:
       /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
 
 
+  # Team Portal Angular Frontend
+  team-portal-frontend:
+    build:
+      context: ./team-portal
+      dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
+    container_name: team-portal-frontend
+    depends_on:
+      - team-portal-tc-app-backend
+    ports:
+      - 4200:4200
+    volumes:
+      - ./team-portal:/app
+      - team-portal-node_modules:/app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
+      
 
-  # tc-app-frontend:
-  #   build:
-  #     context: ./tc-app
-  #     dockerfile: Dockerfile 
-  #   container_name: tc-app-frontend
-  #   depends_on:
-  #     - team-portal-tc-app-backend
-  #   ports:
-  #     - "8888:80"  # Expose port 80
-  #   volumes:
-  #     - ./tc-app:/var/www/html
-  #     - tc-app-node_modules:/var/www/html/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
-    
 
 volumes:
   mysql_db:
   team-portal-node_modules:
-  # tc-app-node_modules:
-
