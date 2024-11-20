@@ -10,7 +10,7 @@
             "request": "launch",
             "port": 9003,
             "pathMappings": {
-                "/app/team-portal": "${workspaceFolder}/team-portal" // Adjust paths accordingly
+                "/app": "${workspaceFolder}" // Adjust paths accordingly
               }
         
         },
