@@ -11,7 +11,7 @@ Een werkende Docker instance (https://www.docker.com/) op je systeem is een requ
 
 # Development
 Na install vind je de services op de volgende urls:
-- WordPress: http://localhost:8080 
+- WordPress: http://localhost 
 - Team-Portal frontend: http://localhost:4200
 - Team-Portal backend: http://localhost/team-portal/api/groepen
 - TC-app frontend: http://localhost/tc-app
