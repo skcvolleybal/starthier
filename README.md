@@ -17,4 +17,6 @@ Na install vind je de services op de volgende urls:
 - TC-app frontend: http://localhost/tc-app
 - TC-app backend: http://localhost/tc-app/php/interface.php
 
+Xdebug staat standaard aan in de apache-webserver container. Zet xdebug.mode = off in /scripts/php.ini en herstart de container om de debugger uit te zetten. 
+
 De files voor WordPress, Team-Portal en TC-app worden als bind mount beschikbaar gemaakt op je lokale machine. Alles wordt gemount naar bijvoorbeeld ./docker/tc-app. Lees de docker-compose.yml om meer te weten. 
