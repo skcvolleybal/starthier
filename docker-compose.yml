@@ -84,7 +84,7 @@ services:
       cd /app/tc-app && composer install &&
       cd /app/tc-app && npm i &&
       cp /app/tc-app/.env.example /app/tc-app/.env &&
-      touch /tmp/xdebug.log &&
+      rm /tmp/xdebug.log && touch /tmp/xdebug.log &&
       /usr/bin/supervisord -c /opt/docker/etc/supervisor.conf"
 
 
