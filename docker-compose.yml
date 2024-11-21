@@ -77,6 +77,7 @@ services:
       - ./team-portal:/app/team-portal/
       - ./tc-app:/app/tc-app/
       - ./scripts/php.ini:/opt/docker/etc/php/php.ini
+      - ./scripts/xdebug.log:/tmp/xdebug.log
     command: bash -c "
       cd /app/team-portal/php && composer install &&
       cp /app/team-portal/php/.env.example /app/team-portal/php/.env &&
