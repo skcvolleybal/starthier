@@ -17,14 +17,12 @@ services:
       - 3306:3306  # Expose MySQL port to the host
 
 
-  # Apache web server with WordPress
+  # Use WordPress image to create the necessary files. Bit weird: we don't use the Apache webserver in this container. We the apache-webserver container defined below.
   wordpress:
     image: wordpress:php8.1
     container_name: wordpress
     depends_on:
       - mysql_db
-    ports:
-      - 8080:80
     environment:
       WORDPRESS_DB_HOST: mysql_db:3306
       WORDPRESS_DB_USER: wordpress
@@ -58,11 +56,11 @@ services:
 
 
   # For debugging: /opt/docker/etc/php has the .ini files you can modify to make Xdebug do what you like
-  team-portal-tc-app-backend:
+  apache-webserver:
     build: 
       context: .
       dockerfile: Dockerfile-apache-webserver-php-xdebug-node
-    container_name: team-portal-tc-app-backend
+    container_name: apache-webserver
     depends_on:
       - mysql_db
     ports:
@@ -95,13 +93,12 @@ services:
       dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
     container_name: team-portal-frontend
     depends_on:
-      - team-portal-tc-app-backend
+      - apache-webserver
     ports:
       - 4200:4200
     volumes:
       - ./team-portal:/app
       - team-portal-node_modules:/app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
-      
 
 
 volumes:
