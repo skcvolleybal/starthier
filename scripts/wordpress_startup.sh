@@ -32,7 +32,12 @@ wp role list --allow-root --path=/var/www/html | grep -q 'abonnee' || wp role cr
 wp role list --allow-root --path=/var/www/html | grep -q 'tc' || wp role create tc 'TC' --allow-root --path=/var/www/html 
 wp role list --allow-root --path=/var/www/html | grep -q 'teamcoordinator' || wp role create teamcoordinator 'Teamcoordinator' --allow-root --path=/var/www/html 
 wp role list --allow-root --path=/var/www/html | grep -q 'webcie' || wp role create webcie 'WebCie' --allow-root --path=/var/www/html 
-wp pods pod add --type=post_type --name=team --allow-root --path=/var/www/html
+
+# Add the pod structure to the site
+wp pods-legacy-api import-pod --file="/pods.json"
+
+# Add a custom team
+wp post create --post_type=team --post_title="Heren 5" --post_status=publish --allow-root --path=/var/www/html
 
 echo "✅  Done running all preprogrammed commands, WP CLI container remains available"
 
