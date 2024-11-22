@@ -3,41 +3,44 @@
 echo "Checking if MySQL is ready..."
 /wait-for-it.sh -t 0 mysql_db:3306
 sleep 5
-wp core install --url='http://localhost' --title='SKC Volleybal Dev Site' --admin_user='webcie' --admin_password='webcie' --admin_email='webcie@skcvolleybal.nl' --path='/var/www/html' --skip-email
+export WP_CLI_PATH='/var/www/html'
+export WP_CLI_ALLOW_ROOT=1
+
+wp core install --url='http://localhost' --title='SKC Volleybal Dev Site' --admin_user='webcie' --admin_password='webcie' --admin_email='webcie@skcvolleybal.nl' --skip-email
 wp option update blogdescription 'Development site for SKC Volleybal' 
-wp user update webcie --first_name='Webcie' --last-name='SKC' --path='/var/www/html'
+wp user update webcie --first_name='Webcie' --last-name='SKC'
 
 
 # Example: Install Pods plugin
 echo "Installing Pods plugin..."
-wp plugin install pods --allow-root --path=/var/www/html
-wp plugin install members --allow-root --path=/var/www/html
+wp plugin install pods
+wp plugin install members
 # Activate them bad boys
-wp plugin activate pods --allow-root --path=/var/www/html
-wp plugin activate members --allow-root --path=/var/www/html
+wp plugin activate pods
+wp plugin activate members
 
 
 # Create custom roles only if they don't already exist
-wp role list --allow-root --path=/var/www/html | grep -q 'beheerder' || wp role create beheerder 'Beheerder' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'barcie' || wp role create barcie 'Barcie' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'bestuur' || wp role create bestuur 'Bestuur' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'commissieco' || wp role create commissieco 'CommissieCo' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'customer' || wp role create customer 'Customer' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'lustrumcie' || wp role create lustrumcie 'LustrumCie' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'paparazcie' || wp role create paparazcie 'PaparazCie' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'scheidsco' || wp role create scheidsco 'ScheidsCo' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'vendor' || wp role create vendor 'Vendor' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'shop' || wp role create shop 'Shop' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'abonnee' || wp role create abonnee 'Abonnee' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'tc' || wp role create tc 'TC' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'teamcoordinator' || wp role create teamcoordinator 'Teamcoordinator' --allow-root --path=/var/www/html 
-wp role list --allow-root --path=/var/www/html | grep -q 'webcie' || wp role create webcie 'WebCie' --allow-root --path=/var/www/html 
+wp role list | grep -q 'beheerder' || wp role create beheerder 'Beheerder' 
+wp role list | grep -q 'barcie' || wp role create barcie 'Barcie' 
+wp role list | grep -q 'bestuur' || wp role create bestuur 'Bestuur' 
+wp role list | grep -q 'commissieco' || wp role create commissieco 'CommissieCo' 
+wp role list | grep -q 'customer' || wp role create customer 'Customer' 
+wp role list | grep -q 'lustrumcie' || wp role create lustrumcie 'LustrumCie' 
+wp role list | grep -q 'paparazcie' || wp role create paparazcie 'PaparazCie' 
+wp role list | grep -q 'scheidsco' || wp role create scheidsco 'ScheidsCo' 
+wp role list | grep -q 'vendor' || wp role create vendor 'Vendor' 
+wp role list | grep -q 'shop' || wp role create shop 'Shop' 
+wp role list | grep -q 'abonnee' || wp role create abonnee 'Abonnee' 
+wp role list | grep -q 'tc' || wp role create tc 'TC' 
+wp role list | grep -q 'teamcoordinator' || wp role create teamcoordinator 'Teamcoordinator' 
+wp role list | grep -q 'webcie' || wp role create webcie 'WebCie' 
 
 # Add the pod structure to the site
 wp pods-legacy-api import-pod --file="/pods.json"
 
 # Add a custom team
-wp post create --post_type=team --post_title="Heren 5" --post_status=publish --allow-root --path=/var/www/html
+wp post create --post_type=team --post_title="Heren 5" --post_status=publish
 
 echo "✅  Done running all preprogrammed commands, WP CLI container remains available"
 
