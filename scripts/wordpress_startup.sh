@@ -39,8 +39,24 @@ wp role list | grep -q 'webcie' || wp role create webcie 'WebCie'
 # Add the pod structure to the site
 wp pods-legacy-api import-pod --file="/pods.json"
 
-# Add a custom team
-wp post create --post_type=team --post_title="Heren 5" --post_status=publish
+# Add a custom team if it doesn't exist yet
+for team_type in Heren Dames; do
+    if [ "$team_type" == "Heren" ]; then
+        max=9
+    else
+        max=15
+    fi
+    for i in $(seq 1 $max); do
+        title="$team_type $i"
+        if ! wp post list --post_type=team --post_status=publish --field=post_title | grep -q "$title"; then
+            wp post create --post_type=team --post_title="$title" --post_status=publish
+        else
+            echo "Post with the title '$title' already exists."
+        fi
+    done
+done
+
+
 
 echo "✅  Done running all preprogrammed commands, WP CLI container remains available"
 
