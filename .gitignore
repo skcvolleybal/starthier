@@ -4,4 +4,5 @@ team-portal
 tc-app
 wordpress_data
 xdebug.log
-scripts/xdebug.log
+scripts/tmp/xdebug.log
+scripts/tmp

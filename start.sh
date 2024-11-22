@@ -28,4 +28,4 @@ echo "✅ TC-app freshly cloned"
 
 # Build and start Docker Compose services
 echo "Building and starting Docker Compose services..."
-docker compose up --build 
+docker compose up
