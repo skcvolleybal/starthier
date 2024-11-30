@@ -47,7 +47,7 @@ services:
       - ./wordpress_data:/var/www/html
       - ./scripts/wait-for-it.sh:/wait-for-it.sh
       - ./scripts/wordpress_startup.sh:/wordpress_startup.sh
-      - ./scripts/pods-package-2024-11-21.json:/pods.json
+      - ./scripts/pods.json:/pods.json
     # vstm: This is required to run wordpress-cli with the same
     # user-id as wordpress. This way there are no permission problems
     # when running the cli
