@@ -36,6 +36,8 @@ wp role list | grep -q 'tc' || wp role create tc 'TC'
 wp role list | grep -q 'teamcoordinator' || wp role create teamcoordinator 'Teamcoordinator' 
 wp role list | grep -q 'webcie' || wp role create webcie 'WebCie' 
 
+wp user add-role 1 beheerder barcie scheidsco tc teamcoordinator webcie
+
 # Add the pod structure to the site
 wp pods-legacy-api import-pod --file="/pods.json"
 
