@@ -59,33 +59,33 @@ for team_type in Heren Dames; do
 done
 
 
-# Work in progress
+# Seems to work?
 # Add Webcie user to Heren 6
-# team_title="Heren 6"
-# user_id="1"
+team_title="Heren 6"
+user_id="1"
 
-# # Find the post ID for "Heren 6"
-# team_post_id=$(wp post list --post_type=team --post_status=publish --field=ID --title="$team_title")
+# Find the post ID for "Heren 6"
+team_post_id=$(wp post list --post_type=team --post_status=publish --field=ID --title="$team_title")
 
-# if [ -n "$team_post_id" ]; then
-#     echo "Adding user $user_id to team $team_title (Post ID: $team_post_id)..."
+if [ -n "$team_post_id" ]; then
+    echo "Adding user $user_id to team $team_title (Post ID: $team_post_id)..."
     
-#     # Check if the `team` meta already exists for the user
-#     if ! wp user meta get "$user_id" "team" | grep -q "$team_post_id"; then
-#         wp user meta add "$user_id" "team" "$team_post_id" || echo "Error adding 'team' meta."
-#     else
-#         echo "'team' meta for user $user_id already set to $team_post_id."
-#     fi
+    # Check if the `team` meta already exists for the user
+    if ! wp user meta get "$user_id" "team" | grep -q "$team_post_id"; then
+        wp user meta add "$user_id" "team" "$team_post_id" || echo "Error adding 'team' meta."
+    else
+        echo "'team' meta for user $user_id already set to $team_post_id."
+    fi
 
-#     # Check if the `_pods_team` meta already exists for the user
-#     if ! wp user meta get "$user_id" "_pods_team" | grep -q "$team_post_id"; then
-#         wp user meta add "$user_id" "_pods_team" "a:1:{i:0;i:$team_post_id;}" || echo "Error adding '_pods_team' meta."
-#     else
-#         echo "'_pods_team' meta for user $user_id already includes $team_post_id."
-#     fi
-# else
-#     echo "Team '$team_title' not found."
-# fi
+    # Check if the `_pods_team` meta already exists for the user
+    if ! wp user meta get "$user_id" "_pods_team" | grep -q "$team_post_id"; then
+        wp user meta add "$user_id" "_pods_team" "a:1:{i:0;i:$team_post_id;}" || echo "Error adding '_pods_team' meta."
+    else
+        echo "'_pods_team' meta for user $user_id already includes $team_post_id."
+    fi
+else
+    echo "Team '$team_title' not found."
+fi
 
 
 
