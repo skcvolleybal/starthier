@@ -19,7 +19,7 @@ services:
 
   # Use WordPress image to create the necessary files. Bit weird: we don't use the Apache webserver in this container. We the apache-webserver container defined below.
   wordpress:
-    image: wordpress:php8.1
+    image: wordpress:php8.2
     container_name: wordpress
     depends_on:
       - mysql_db
