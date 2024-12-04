@@ -56,7 +56,8 @@ services:
       sh -c "set -e; sh /wordpress_startup.sh"
 
 
-  # For debugging: /opt/docker/etc/php has the .ini files you can modify to make Xdebug do what you like
+  # For debugging: /opt/docker/etc/php has the .ini files you can modify to make Xdebug do what you like.
+  # You need to stop+start the apache-webserver container after modifying the .ini file to activate the changes. 
   apache-webserver:
     build: 
       context: .
