@@ -1,5 +1,8 @@
-# We use a nice PHP image with apache and Xdebug and extend it with Node so we don't have to modify tc-app to be able to handle port numbers in its url
-FROM webdevops/php-apache-dev:8.2
+# We use a PHP image with Apache and Xdebug and extend it with Node so we we can start TC-app easily.
+FROM webdevops/php-apache-dev:8.2 
+
+# For more performance but less plugins and no Xdebug, use:
+# FROM webdevops/php-apache:8.2
 
 # Update the package index
 RUN apt-get update && apt-get install -y curl
