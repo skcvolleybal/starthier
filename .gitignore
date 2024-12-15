@@ -1,7 +1,5 @@
 .DS_Store
 *.dmg
-team-portal
-tc-app
 wordpress_data
 xdebug.log
 scripts/tmp/xdebug.log
