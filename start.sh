@@ -7,8 +7,8 @@ echo "✅ Docker is running. Continuing..."
 
 # Define repositories and their corresponding directories
 REPOS=(
-    "git@github.com:your-org/team-portal.git team-portal"
-    "git@github.com:your-org/tc-app.git tc-app"
+    "git@https://github.com/skcvolleybal/team-portal.git team-portal"
+    "git@https://github.com/skcvolleybal/tc-app.git tc-app"
 )
 
 # Delete and reinitialize subtree directories
