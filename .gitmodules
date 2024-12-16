@@ -1,6 +1,9 @@
 [submodule "team-portal"]
 	path = team-portal
-	url = https://github.com/skcvolleybal/team-portal.git
+	url = https://github.com/skcvolleybal/team-portal
+    branch = master
+
 [submodule "tc-app"]
 	path = tc-app
 	url = https://github.com/skcvolleybal/tc-app
+    branch = master

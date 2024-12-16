@@ -19,7 +19,7 @@ if [ -d "tc-app" ]; then
     echo "Existing Team-Portal removed"
 fi
 
-git submodule update --init --recursive
+git submodule update --init --recursive  # This clones the submodule if not already done
 
 
 # Build and start Docker Compose services
