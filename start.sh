@@ -5,15 +5,16 @@ command -v docker &>/dev/null || { echo "❌ Docker is not installed. Please ins
 pgrep -x "docker" &>/dev/null || { echo "❌ Docker is installed but not running. Please start Docker and try again."; exit 1; }
 echo "✅ Docker is running. Continuing..."
 
-# Define repositories and prefixes
-declare -A REPOS=(
-    ["team-portal"]="git@github.com:your-org/team-portal.git"
-    ["tc-app"]="git@github.com:your-org/tc-app.git"
+# Define repositories and their corresponding directories
+REPOS=(
+    "git@github.com:your-org/team-portal.git team-portal"
+    "git@github.com:your-org/tc-app.git tc-app"
 )
 
 # Delete and reinitialize subtree directories
-for DIR in "${!REPOS[@]}"; do
-    REPO="${REPOS[$DIR]}"
+for REPO_PAIR in "${REPOS[@]}"; do
+    REPO=$(echo "$REPO_PAIR" | awk '{print $1}')
+    DIR=$(echo "$REPO_PAIR" | awk '{print $2}')
     
     if [ -d "$DIR" ]; then
         echo "Deleting existing $DIR directory..."
