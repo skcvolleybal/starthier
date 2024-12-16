@@ -7,9 +7,10 @@ echo "✅ Docker is running. Continuing..."
 
 # Define repositories and their corresponding directories
 REPOS=(
-    "git@https://github.com/skcvolleybal/team-portal.git team-portal"
-    "git@https://github.com/skcvolleybal/tc-app.git tc-app"
+    "https://github.com/skcvolleybal/team-portal.git team-portal"
+    "https://github.com/skcvolleybal/tc-app.git tc-app"
 )
+
 
 # Delete and reinitialize subtree directories
 for REPO_PAIR in "${REPOS[@]}"; do
