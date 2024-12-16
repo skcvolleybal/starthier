@@ -24,7 +24,7 @@ for REPO_PAIR in "${REPOS[@]}"; do
     fi
     
     echo "Reinitializing $DIR as a subtree..."
-    git subtree add --prefix="$DIR" "$REPO" main --squash
+    git subtree add --prefix="$DIR" "$REPO" master --squash
 done
 
 # Build and start Docker Compose services
