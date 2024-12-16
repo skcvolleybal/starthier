@@ -5,28 +5,13 @@ command -v docker &>/dev/null || { echo "❌ Docker is not installed. Please ins
 pgrep -x "docker" &>/dev/null || { echo "❌ Docker is installed but not running. Please start Docker and try again."; exit 1; }
 echo "✅ Docker is running. Continuing..."
 
-# Define repositories and their corresponding directories
-REPOS=(
-    "https://github.com/skcvolleybal/team-portal.git team-portal"
-    "https://github.com/skcvolleybal/tc-app.git tc-app"
-)
+# Exit immediately if a command exits with a non-zero status
+set -e
 
+git subtree add --prefix="team-portal" "https://github.com/skcvolleybal/team-portal.git" "master" 
+git subtree add --prefix="tc-app" "https://github.com/skcvolleybal/tc-app.git" "master" 
 
-# Delete and reinitialize subtree directories
-for REPO_PAIR in "${REPOS[@]}"; do
-    REPO=$(echo "$REPO_PAIR" | awk '{print $1}')
-    DIR=$(echo "$REPO_PAIR" | awk '{print $2}')
-    
-    if [ -d "$DIR" ]; then
-        echo "Deleting existing $DIR directory..."
-        rm -rf "$DIR"
-        echo "Existing $DIR removed"
-    fi
-    
-    echo "Reinitializing $DIR as a subtree..."
-    git subtree add --prefix="$DIR" "$REPO" master --squash
-done
-
+echo "Subtrees added successfully."
 # Build and start Docker Compose services
 echo "Building and starting Docker Compose services..."
 docker compose up
