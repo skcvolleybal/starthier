@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "devsense.phptools-vscode",
-        "xdebug.php-debug"
+        "xdebug.php-debug",
+        "cweijan.dbclient-jdbc"
     ]
 }
