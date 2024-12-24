@@ -87,6 +87,64 @@ else
     echo "Team '$team_title' not found."
 fi
 
+# Generate a variable number of team members and assign them to random teams
+# Only proceed if there's exactly one user (webcie)
+existing_user_count=$(wp user list --field=ID | wc -l)
+if [ "$existing_user_count" -eq 1 ]; then
+    number_of_members=20  # Change this value to increase or decrease the number of members
+    team_ids=($(wp post list --post_type=team --post_status=publish --field=ID))
+
+    # Arrays of celebrity first names and surnames (including Dutch celebrities)
+    first_names=("Marco" "Linda" "André" "Eva" "Doutzen" "Rico" "Arjen" "Sven" "Ali" "Famke")
+    last_names=("Borsato" "de Mol" "Hazes" "Jinek" "Kroes" "Verhoeven" "Lubach" "Kramer" "B" "Louise")
+
+    if [ ${#team_ids[@]} -eq 0 ]; then
+        echo "No teams found. Skipping team member assignment."
+    else
+        echo "Generating $number_of_members team members with celebrity names and assigning them to random teams..."
+        for member_number in $(seq 1 $number_of_members); do
+            # Generate a random first name and last name
+            first_name=${first_names[$RANDOM % ${#first_names[@]}]}
+            last_name=${last_names[$RANDOM % ${#last_names[@]}]}
+            full_name="$first_name $last_name"
+
+            # Create unique username and email
+            username=$(echo "${first_name}_${last_name}_${member_number}" | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
+            email="${username}@example.com"
+            password="password_${member_number}"
+
+            # Check if the user already exists
+            if wp user get $username &> /dev/null; then
+                echo "User $username already exists. Skipping creation."
+            else
+                # Create the user
+                wp user create $username $email --role=subscriber --user_pass=$password --first_name="$first_name" --last_name="$last_name"
+                echo "Created user $full_name with username $username."
+            fi
+
+            # Assign the user to a random team
+            random_team_id=${team_ids[$RANDOM % ${#team_ids[@]}]}
+
+            echo "Assigning user $username to team with ID $random_team_id..."
+
+            # Check if the `team` meta already exists for the user
+            if ! wp user meta get $username "team" | grep -q "$random_team_id"; then
+                wp user meta add $username "team" "$random_team_id" || echo "Error adding 'team' meta."
+            else
+                echo "'team' meta for user $username already set to $random_team_id."
+            fi
+
+            # Check if the `_pods_team` meta already exists for the user
+            if ! wp user meta get $username "_pods_team" | grep -q "$random_team_id"; then
+                wp user meta add $username "_pods_team" "a:1:{i:0;i:$random_team_id;}" || echo "Error adding '_pods_team' meta."
+            else
+                echo "'_pods_team' meta for user $username already includes $random_team_id."
+            fi
+        done
+    fi
+else
+    echo "Skipping team member generation. User count is not equal to one."
+fi
 
 
 echo "✅  Done running all preprogrammed commands, WP CLI container remains available"
