@@ -82,6 +82,7 @@ services:
       cd /app/team-portal/php && composer install &&
       cp /app/team-portal/php/.env.example /app/team-portal/php/.env &&
       cd /app/tc-app && composer install &&
+      composer dump-autoload &&
       cd /app/tc-app && npm i &&
       cp /app/tc-app/.env.example /app/tc-app/.env &&
       rm /tmp/xdebug.log && touch /tmp/xdebug.log &&
