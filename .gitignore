@@ -5,3 +5,4 @@ xdebug.log
 scripts/tmp/xdebug.log
 scripts/tmp
 scripts/php.ini
+*.diff
