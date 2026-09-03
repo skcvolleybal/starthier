@@ -5,31 +5,32 @@ services:
     image: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+      MYSQL_USER: ${MYSQL_USER:-wordpress}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-wordpress}
     volumes:
       - mysql_db:/var/lib/mysql
-      - ./team-portal/php/scripts/Seeder_data.sql:/docker-entrypoint-initdb.d/Seeder_data.sql # Very nice. If this container is started with an empty volume, Docker mounts the .sql file in docker-entrypoint-initdb.d and MySQL wil automatically execute any SQL file in this directory. So the database is seeded automatically. 
-      - ./tc-app/database_install.sql:/docker-entrypoint-initdb.d/database_install.sql # 
-    ports: 
-      - 3306:3306  # Expose MySQL port to the host
+      - ./team-portal/php/scripts/Seeder_data.sql:/docker-entrypoint-initdb.d/Seeder_data.sql
+      - ./tc-app/database_install.sql:/docker-entrypoint-initdb.d/database_install.sql
+    ports:
+      - "3306:3306"
 
 
-  # Use WordPress image to create the necessary files. Bit weird: we don't use the Apache webserver in this container. We the apache-webserver container defined below.
+  # Use WordPress image to create the necessary files.
   wordpress:
     image: wordpress:php8.2
     container_name: wordpress
     depends_on:
       - mysql_db
     environment:
-      WORDPRESS_DB_HOST: mysql_db:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:-mysql_db:3306}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-${MYSQL_USER:-wordpress}}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-${MYSQL_PASSWORD:-wordpress}}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-${MYSQL_DATABASE:-wordpress}}
     volumes:
       - ./wordpress_data:/var/www/html
+
 
   # WP-CLI container
   wpcli:
@@ -39,39 +40,35 @@ services:
       - wordpress
       - team-portal-frontend
     environment:
-      WORDPRESS_DB_HOST: mysql_db
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST_CLI:-${WORDPRESS_DB_HOST:-mysql_db}}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-${MYSQL_USER:-wordpress}}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-${MYSQL_PASSWORD:-wordpress}}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-${MYSQL_DATABASE:-wordpress}}
     volumes:
       - ./wordpress_data:/var/www/html
       - ./scripts/wait-for-it.sh:/wait-for-it.sh
       - ./scripts/wordpress_startup.sh:/wordpress_startup.sh
       - ./scripts/pods.json:/pods.json
-    # vstm: This is required to run wordpress-cli with the same
-    # user-id as wordpress. This way there are no permission problems
-    # when running the cli
-    user: '33'
+    user: "33"
     entrypoint: >
       sh -c "set -e; sh /wordpress_startup.sh"
 
 
-  # For debugging: /opt/docker/etc/php has the .ini files you can modify to make Xdebug do what you like.
-  # You need to stop+start the apache-webserver container after modifying the .ini file to activate the changes. 
+  # Apache webserver + PHP + Xdebug + Node
   apache-webserver:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile-apache-webserver-php-xdebug-node
     container_name: apache-webserver
     depends_on:
       - mysql_db
     ports:
-      - 80:80
+      - "80:80"
     environment:
-      WORDPRESS_DB_HOST: mysql_db:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:-mysql_db:3306}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-${MYSQL_USER:-wordpress}}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-${MYSQL_PASSWORD:-wordpress}}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-${MYSQL_DATABASE:-wordpress}}
     volumes:
       - ./wordpress_data:/app/
       - ./team-portal:/app/team-portal/
@@ -93,15 +90,15 @@ services:
   team-portal-frontend:
     build:
       context: ./team-portal
-      dockerfile: ./Dockerfile-frontend #  Dockerfile exists in the repo
+      dockerfile: ./Dockerfile-frontend
     container_name: team-portal-frontend
     depends_on:
       - apache-webserver
     ports:
-      - 4200:4200
+      - "4200:4200"
     volumes:
       - ./team-portal:/app
-      - team-portal-node_modules:/app/node_modules # Anonymous volume for node_modules, so we don't overwrite the node_modules in the container
+      - team-portal-node_modules:/app/node_modules
 
 
 volumes:
